@@ -25,12 +25,12 @@ ModuleRender::~ModuleRender()
 bool ModuleRender::Init()
 {
 	LOG("Creating Renderer context");
-
-	SDL_Window* window = SDL_CreateWindow(
+	
+	App->window->window = SDL_CreateWindow(
 		"SDL2/OpenGL Demo", 0, 0, 1920, 1080,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
-	this->context = SDL_GL_CreateContext(window);
+	this->context = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit();
 	// … check for errors
@@ -51,8 +51,8 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
-	int *width, *height;
-	SDL_GetWindowSize(this->window, width, height);
+	int* width{}, * height{};
+	SDL_GetWindowSize(App->window->window, width, height);
 
 	glViewport(0, 0, (GLsizei)width, (GLsizei) height);
 
@@ -72,7 +72,7 @@ update_status ModuleRender::Update()
 
 update_status ModuleRender::PostUpdate()
 {
-	SDL_GL_SwapWindow(this->window);
+	SDL_GL_SwapWindow(App->window->window);
 	
 	return UPDATE_CONTINUE;
 }
