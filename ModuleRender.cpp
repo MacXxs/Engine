@@ -29,7 +29,7 @@ bool ModuleRender::Init()
 	LOG("Creating Renderer context");
 	
 	App->window->window = SDL_CreateWindow(
-		"SDL2/OpenGL Demo", 0, 0, 1920, 1080,
+		"SDL2/OpenGL Demo", 0, 0, SCREEN_WIDTH, SCREEN_WIDTH,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
 	this->context = SDL_GL_CreateContext(App->window->window);
@@ -68,7 +68,6 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
-
 	return UPDATE_CONTINUE;
 }
 
