@@ -21,4 +21,6 @@ public:
 
 private:
 	void * context;
+
+	friend class ModuleEditor;
 };

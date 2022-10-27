@@ -54,6 +54,7 @@ unsigned ModuleProgram::CompileShader(unsigned type, const char* source)
 	unsigned shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &source, 0);
 	glCompileShader(shader_id);
+
 	int res = GL_FALSE;
 	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
 	if (res == GL_FALSE)
@@ -70,5 +71,4 @@ unsigned ModuleProgram::CompileShader(unsigned type, const char* source)
 		}
 	}
 	return shader_id;
-	return 0;
 }

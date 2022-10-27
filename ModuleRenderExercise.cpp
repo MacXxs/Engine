@@ -19,8 +19,8 @@ bool ModuleRenderExercise::Init()
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo); // set vbo active
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
 
-	char* vertexSource = App->program->LoadShaderSource("default_vertex.glsl");
-	char* fragmentSource = App->program->LoadShaderSource("default_fragment.glsl");
+	char* vertexSource = App->program->LoadShaderSource("Shaders/default_vertex.glsl");
+	char* fragmentSource = App->program->LoadShaderSource("Shaders/default_fragment.glsl");
 
 	unsigned vertexShader = App->program->CompileShader(GL_VERTEX_SHADER, vertexSource);
 	unsigned fragmentShader = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
