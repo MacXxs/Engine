@@ -53,7 +53,7 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
-	int* width{}, * height{};
+	int* width = {}, * height = {};
 	SDL_GetWindowSize(App->window->window, width, height);
 
 	glViewport(0, 0, (GLsizei)width, (GLsizei) height);
