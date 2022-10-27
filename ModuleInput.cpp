@@ -2,7 +2,9 @@
 #include "Application.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
+#include "ModuleProgram.h"
 #include "SDL/include/SDL.h"
+#include <GL/glew.h>
 
 ModuleInput::ModuleInput()
 {}
@@ -30,6 +32,9 @@ bool ModuleInput::Init()
 // Called every draw update
 update_status ModuleInput::Update()
 {
+    update_status status = UPDATE_CONTINUE;
+
+    SDL_PumpEvents();
     SDL_Event sdlEvent;
 
     while (SDL_PollEvent(&sdlEvent) != 0)
@@ -47,7 +52,11 @@ update_status ModuleInput::Update()
 
     keyboard = SDL_GetKeyboardState(NULL);
 
-    return UPDATE_CONTINUE;
+    if (keyboard[SDL_SCANCODE_ESCAPE]) {
+        status = UPDATE_STOP;
+    }
+
+    return status;
 }
 
 // Called before quitting

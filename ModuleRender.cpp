@@ -7,6 +7,8 @@
 
 ModuleRender::ModuleRender()
 {
+	this->context = nullptr;
+
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
@@ -56,7 +58,7 @@ update_status ModuleRender::PreUpdate()
 
 	glViewport(0, 0, (GLsizei)width, (GLsizei) height);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
