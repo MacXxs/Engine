@@ -23,6 +23,7 @@ bool ModuleEditor::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
+	ImGui_ImplOpenGL3_Init("440");
 
 	return ret;
 }
