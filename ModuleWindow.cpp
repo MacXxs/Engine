@@ -33,6 +33,18 @@ bool ModuleWindow::Init()
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
+		else if (BORDERLESS == true)
+		{
+			flags |= SDL_WINDOW_BORDERLESS;
+		}
+		else if (RESIZABLE == true)
+		{
+			flags |= SDL_WINDOW_RESIZABLE;
+		}
+		else if (FULLSCREEN_DESKTOP == true)
+		{
+			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
 
 		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 

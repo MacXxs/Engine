@@ -8,7 +8,7 @@ void ModuleProgram::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
 {
 	this->program = glCreateProgram();
 	glAttachShader(this->program, vtx_shader);
-	glAttachShader(this->program, vtx_shader);
+	glAttachShader(this->program, frg_shader);
 	glLinkProgram(this->program);
 
 	int res;
@@ -45,14 +45,12 @@ char* ModuleProgram::LoadShaderSource(const char* shader_file_name)
 		data[size] = 0;
 		fclose(file);
 	}
-	LOG("Data: %s", data);
 
 	return data;
 }
 
 unsigned ModuleProgram::CompileShader(unsigned type, const char* source)
 {
-	LOG("------- COMPILE SHADER -------")
 	unsigned shader_id = glCreateShader(type);
 	glShaderSource(shader_id, 1, &source, 0);
 	glCompileShader(shader_id);
