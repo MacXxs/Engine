@@ -5,6 +5,38 @@
 #include "GL/glew.h"
 #include "SDL.h"
 
+void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+{
+	const char* tmp_source = "", * tmp_type = "", * tmp_severity = "";
+	switch (source) {
+	case GL_DEBUG_SOURCE_API: tmp_source = "API"; break;
+	case GL_DEBUG_SOURCE_WINDOW_SYSTEM: tmp_source = "Window System"; break;
+	case GL_DEBUG_SOURCE_SHADER_COMPILER: tmp_source = "Shader Compiler"; break;
+	case GL_DEBUG_SOURCE_THIRD_PARTY: tmp_source = "Third Party"; break;
+	case GL_DEBUG_SOURCE_APPLICATION: tmp_source = "Application"; break;
+	case GL_DEBUG_SOURCE_OTHER: tmp_source = "Other"; break;
+	};
+	switch (type) {
+	case GL_DEBUG_TYPE_ERROR: tmp_type = "Error"; break;
+	case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: tmp_type = "Deprecated Behaviour"; break;
+	case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: tmp_type = "Undefined Behaviour"; break;
+	case GL_DEBUG_TYPE_PORTABILITY: tmp_type = "Portability"; break;
+	case GL_DEBUG_TYPE_PERFORMANCE: tmp_type = "Performance"; break;
+	case GL_DEBUG_TYPE_MARKER: tmp_type = "Marker"; break;
+	case GL_DEBUG_TYPE_PUSH_GROUP: tmp_type = "Push Group"; break;
+	case GL_DEBUG_TYPE_POP_GROUP: tmp_type = "Pop Group"; break;
+	case GL_DEBUG_TYPE_OTHER: tmp_type = "Other"; break;
+	};
+	switch (severity) {
+	case GL_DEBUG_SEVERITY_HIGH: tmp_severity = "high"; break;
+	case GL_DEBUG_SEVERITY_MEDIUM: tmp_severity = "medium"; break;
+	case GL_DEBUG_SEVERITY_LOW: tmp_severity = "low"; break;
+	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
+	};
+	ENGINGE_LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
+}
+
+
 ModuleRender::ModuleRender()
 {
 	this->context = nullptr;
@@ -26,7 +58,7 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
-	LOG("Creating Renderer context");
+	ENGINGE_LOG("Creating Renderer context");
 	
 	/*App->window->window = SDL_CreateWindow(
 		"SDL2/OpenGL Demo", 0, 0, SCREEN_WIDTH, SCREEN_WIDTH,
@@ -35,17 +67,24 @@ bool ModuleRender::Init()
 	this->context = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit();
+	ENGINGE_LOG("glew error %s", glewGetErrorString(err));
 	// … check for errors
-	LOG("Using Glew %s", glewGetString(GLEW_VERSION));
+	ENGINGE_LOG("Using Glew %s", glewGetString(GLEW_VERSION));
 	// Should be 2.0
 
-	LOG("Vendor: %s", glGetString(GL_VENDOR));
-	LOG("Renderer: %s", glGetString(GL_RENDERER));
-	LOG("OpenGL version supported %s", glGetString(GL_VERSION));
-	LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	ENGINGE_LOG("Vendor: %s", glGetString(GL_VENDOR));
+	ENGINGE_LOG("Renderer: %s", glGetString(GL_RENDERER));
+	ENGINGE_LOG("OpenGL version supported %s", glGetString(GL_VERSION));
+	ENGINGE_LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
-	glEnable(GL_DEPTH_TEST); // Enable depth test
-	glEnable(GL_CULL_FACE); // Enable cull backward faces
+	glEnable(GL_DEBUG_OUTPUT); 
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
+	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr); 
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
+
+	glDisable(GL_BLEND_COLOR);
+	glDisable(GL_DEPTH_TEST); // Enable depth test
+	glDisable(GL_CULL_FACE); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
 
 	return true;
@@ -53,12 +92,13 @@ bool ModuleRender::Init()
 
 update_status ModuleRender::PreUpdate()
 {
-	int* width = {}, * height = {};
-	SDL_GetWindowSize(App->window->window, width, height);
+	int width, height;
 
-	glViewport(0, 0, (GLsizei)width, (GLsizei) height);
+	SDL_GetWindowSize(App->window->window, &width, &height);
 
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glViewport(0, 0, width, height);
+
+	glClearColor(1.0f, 0.9f, 0.6f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -81,7 +121,7 @@ update_status ModuleRender::PostUpdate()
 // Called before quitting
 bool ModuleRender::CleanUp()
 {
-	LOG("Destroying renderer");
+	ENGINGE_LOG("Destroying renderer");
 
 	SDL_GL_DeleteContext(this->context);
 

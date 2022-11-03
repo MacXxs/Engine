@@ -9,7 +9,7 @@ ModuleRenderExercise::~ModuleRenderExercise() {}
 
 bool ModuleRenderExercise::Init()
 {
-	LOG("Module Render Exercise init!");
+	ENGINGE_LOG("Module Render Exercise init!");
 
 	bool ret = true;
 
