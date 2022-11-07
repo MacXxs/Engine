@@ -5,7 +5,6 @@
 class ModuleRenderExercise : public Module
 {
 public:
-
 	ModuleRenderExercise();
 	~ModuleRenderExercise();
 
@@ -15,5 +14,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
+	void renderTriangle();
+
+public:
 	unsigned vbo;
 };
