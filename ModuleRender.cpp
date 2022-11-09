@@ -82,9 +82,8 @@ bool ModuleRender::Init()
 	glDebugMessageCallback(&OurOpenGLErrorFunction, nullptr); 
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, true);
 
-	glDisable(GL_BLEND_COLOR);
-	glDisable(GL_DEPTH_TEST); // Enable depth test
-	glDisable(GL_CULL_FACE); // Enable cull backward faces
+	glEnable(GL_DEPTH_TEST); // Enable depth test
+	glEnable(GL_CULL_FACE); // Enable cull backward faces
 	glFrontFace(GL_CCW); // Front faces will be counter clockwise
 
 	return true;
@@ -98,7 +97,7 @@ update_status ModuleRender::PreUpdate()
 
 	glViewport(0, 0, width, height);
 
-	glClearColor(1.0f, 0.9f, 0.6f, 1.0f);
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
