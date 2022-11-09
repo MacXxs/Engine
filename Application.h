@@ -10,6 +10,7 @@ class ModuleInput;
 class ModuleProgram;
 class ModuleRenderExercise;
 class ModuleDebugDraw;
+class ModuleEditor;
 
 class Application
 {
@@ -18,6 +19,7 @@ public:
 	Application();
 	~Application();
 
+	bool Start();
 	bool Init();
 	update_status Update();
 	bool CleanUp();
@@ -29,6 +31,7 @@ public:
 	ModuleProgram* program = nullptr;
 	ModuleRenderExercise* object = nullptr;
 	ModuleDebugDraw* debug = nullptr;
+	ModuleEditor* editor = nullptr;
 
 private:
 

@@ -46,8 +46,6 @@ char* ModuleProgram::LoadShaderSource(const char* shader_file_name)
 		fclose(file);
 	}
 
-	ENGINGE_LOG("Vertex: %s", &data[0]);
-
 	return data;
 }
 

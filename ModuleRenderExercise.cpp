@@ -14,7 +14,7 @@
 ModuleRenderExercise::ModuleRenderExercise() {}
 ModuleRenderExercise::~ModuleRenderExercise() {}
 
-bool ModuleRenderExercise::Init()
+bool ModuleRenderExercise::Start()
 {
 	ENGINGE_LOG("Module Render Exercise init!");
 
@@ -95,6 +95,7 @@ void ModuleRenderExercise::renderTriangle()
 	//view = float4x4::LookAt(float3(0, 2, 10), float3(0.0f, 0.0f, 0.0f), -float3::unitZ, float3::unitY, float3::unitY);
 	view = frustum.ViewMatrix();
 	
+	glUseProgram(App->program->program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &proj[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &model[0][0]);
@@ -104,7 +105,6 @@ void ModuleRenderExercise::renderTriangle()
 	// size = 3 float per vertex
 	// stride = 0 is equivalent to stride = sizeof(float)*3
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-	glUseProgram(App->program->program);
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 3);
 

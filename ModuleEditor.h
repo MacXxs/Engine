@@ -7,6 +7,12 @@ public:
 	ModuleEditor();
 	~ModuleEditor();
 
-	bool Init();
+	bool Init() override;
+	bool Start() override;
+	bool CleanUp() override;
+
+	update_status PreUpdate() override;
+	update_status Update() override;
+	update_status PostUpdate() override;
 };
 

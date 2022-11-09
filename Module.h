@@ -12,6 +12,11 @@ public:
 	{
 	}
 
+	virtual bool Start()
+	{
+		return true;
+	}
+
 	virtual bool Init() 
 	{
 		return true; 
