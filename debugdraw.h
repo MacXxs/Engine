@@ -1,7 +1,7 @@
 #ifndef _DEBUGDRAW_H_
 #define _DEBUGDRAW_H_
 
-#include "Libraries/MathGeoLib/src/Math/float3x3.h"
+#include "Libraries/MathGeoLib/src/Math/float3.h"
 #include "Libraries/MathGeoLib/src/Math/float4x4.h"
 
 typedef math::float3 ddVec3;

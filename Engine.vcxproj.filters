@@ -60,6 +60,7 @@
     <ClCompile Include="Libraries\MathGeoLib\src\Algorithm\Random\LCG.cpp" />
     <ClCompile Include="Libraries\MathGeoLib\src\Time\Clock.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
+    <ClCompile Include="ModuleTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="ModuleDebugDraw.h" />
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="debugdraw.h" />
+    <ClInclude Include="ModuleTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\MathGeoLib\src\Geometry\KDTree.inl" />

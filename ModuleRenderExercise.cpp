@@ -3,10 +3,12 @@
 #include "Application.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleWindow.h"
-#define DEBUG_DRAW_IMPLEMENTATION
-#include "debug_draw.hpp"
+
+//#include "debug_draw.hpp"
+
 #include <iostream>
 #include <GL/glew.h>
+
 #include "Libraries/MathGeoLib/src/Geometry/Frustum.h"
 #include "Libraries/MathGeoLib/src/Math/float3x3.h"
 #include "SDL.h"
@@ -20,7 +22,7 @@ bool ModuleRenderExercise::Start()
 
 	bool ret = true;
 
-	float vtx_data[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f };
+	float vtx_data[] = { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f };
 
 	glGenBuffers(1, &this->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo); // set vbo active
@@ -76,7 +78,6 @@ void ModuleRenderExercise::renderTriangle()
 	float verticalFov = math::pi / 4.0f;
 	float horizontalFov = 2.f * atanf(tanf(verticalFov * 0.5f) * aspectRatio);
 
-
 	Frustum frustum;
 	frustum.SetKind(FrustumProjectiveSpace::FrustumSpaceGL, FrustumHandedness::FrustumRightHanded);
 
@@ -89,9 +90,9 @@ void ModuleRenderExercise::renderTriangle()
 	frustum.SetHorizontalFovAndAspectRatio(horizontalFov, aspectRatio);
 
 	proj = frustum.ProjectionMatrix();
-	model = float4x4::FromTRS(float3(2.0f, 0.0f, 0.0f),
-		float4x4::RotateZ(pi / 4.0f),
-		float3(2.0f, 1.0f, 0.0f));
+	model = float4x4::FromTRS(float3(1.0f, 0.0f, 0.0f),
+		float4x4::RotateZ(0),
+		float3(1.0f, 1.0f, 0.0f));
 	//view = float4x4::LookAt(float3(0, 2, 10), float3(0.0f, 0.0f, 0.0f), -float3::unitZ, float3::unitY, float3::unitY);
 	view = frustum.ViewMatrix();
 	
@@ -106,17 +107,7 @@ void ModuleRenderExercise::renderTriangle()
 	// stride = 0 is equivalent to stride = sizeof(float)*3
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 	// 1 triangle to draw = 3 vertices
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-
-	const ddMat4x4 transform = { // The identity matrix
-	1.0f, 0.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f
-	};
-
-	dd::axisTriad(transform, 0.1f, 1.0f);
-	dd::xzSquareGrid(-50, 50, 0.0f, 1.0f, dd::colors::Gray);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	App->debug->Draw(view, proj, w, h);
 }
