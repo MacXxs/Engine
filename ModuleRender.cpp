@@ -33,7 +33,7 @@ void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLe
 	case GL_DEBUG_SEVERITY_LOW: tmp_severity = "low"; break;
 	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
 	};
-	ENGINGE_LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
+	ENGINE_LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
 }
 
 
@@ -58,7 +58,7 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
-	ENGINGE_LOG("Creating Renderer context");
+	ENGINE_LOG("Creating Renderer context");
 	
 	/*App->window->window = SDL_CreateWindow(
 		"SDL2/OpenGL Demo", 0, 0, SCREEN_WIDTH, SCREEN_WIDTH,
@@ -67,15 +67,15 @@ bool ModuleRender::Init()
 	this->context = SDL_GL_CreateContext(App->window->window);
 
 	GLenum err = glewInit();
-	ENGINGE_LOG("glew error %s", glewGetErrorString(err));
+	ENGINE_LOG("glew error %s", glewGetErrorString(err));
 	// … check for errors
-	ENGINGE_LOG("Using Glew %s", glewGetString(GLEW_VERSION));
+	ENGINE_LOG("Using Glew %s", glewGetString(GLEW_VERSION));
 	// Should be 2.0
 
-	ENGINGE_LOG("Vendor: %s", glGetString(GL_VENDOR));
-	ENGINGE_LOG("Renderer: %s", glGetString(GL_RENDERER));
-	ENGINGE_LOG("OpenGL version supported %s", glGetString(GL_VERSION));
-	ENGINGE_LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	ENGINE_LOG("Vendor: %s", glGetString(GL_VENDOR));
+	ENGINE_LOG("Renderer: %s", glGetString(GL_RENDERER));
+	ENGINE_LOG("OpenGL version supported %s", glGetString(GL_VERSION));
+	ENGINE_LOG("GLSL: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
 	glEnable(GL_DEBUG_OUTPUT); 
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); 
@@ -120,7 +120,7 @@ update_status ModuleRender::PostUpdate()
 // Called before quitting
 bool ModuleRender::CleanUp()
 {
-	ENGINGE_LOG("Destroying renderer");
+	ENGINE_LOG("Destroying renderer");
 
 	SDL_GL_DeleteContext(this->context);
 

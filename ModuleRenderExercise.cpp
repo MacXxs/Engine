@@ -2,6 +2,7 @@
 #include "ModuleProgram.h"
 #include "Application.h"
 #include "ModuleDebugDraw.h"
+#include "ModuleEngineCamera.h"
 #include "ModuleWindow.h"
 
 //#include "debug_draw.hpp"
@@ -18,7 +19,7 @@ ModuleRenderExercise::~ModuleRenderExercise() {}
 
 bool ModuleRenderExercise::Start()
 {
-	ENGINGE_LOG("Module Render Exercise init!");
+	ENGINE_LOG("Module Render Exercise init!");
 
 	bool ret = true;
 
@@ -69,32 +70,17 @@ bool ModuleRenderExercise::CleanUp()
 
 void ModuleRenderExercise::renderTriangle()
 {
-	float4x4 model, view, proj;
-	
 	int w, h;
+	float4x4 model, view, proj;
+
 	SDL_GetWindowSize(App->window->window, &w, &h);
 
-	float aspectRatio = float(w) / h;
-	float verticalFov = math::pi / 4.0f;
-	float horizontalFov = 2.f * atanf(tanf(verticalFov * 0.5f) * aspectRatio);
-
-	Frustum frustum;
-	frustum.SetKind(FrustumProjectiveSpace::FrustumSpaceGL, FrustumHandedness::FrustumRightHanded);
-
-	frustum.SetPos(float3(0, 2, 10));
-	frustum.SetFront(-float3::unitZ);
-	frustum.SetUp(float3::unitY);
-
-	frustum.SetViewPlaneDistances(0.1f, 100.0f);
-	
-	frustum.SetHorizontalFovAndAspectRatio(horizontalFov, aspectRatio);
-
-	proj = frustum.ProjectionMatrix();
+	proj = App->engineCamera->GetProjectionMatrix();
 	model = float4x4::FromTRS(float3(1.0f, 0.0f, 0.0f),
 		float4x4::RotateZ(0),
 		float3(1.0f, 1.0f, 0.0f));
 	//view = float4x4::LookAt(float3(0, 2, 10), float3(0.0f, 0.0f, 0.0f), -float3::unitZ, float3::unitY, float3::unitY);
-	view = frustum.ViewMatrix();
+	view = App->engineCamera->GetViewMatrix();
 	
 	glUseProgram(App->program->program);
 	glUniformMatrix4fv(0, 1, GL_TRUE, &proj[0][0]);

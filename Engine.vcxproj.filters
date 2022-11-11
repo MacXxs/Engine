@@ -61,6 +61,7 @@
     <ClCompile Include="Libraries\MathGeoLib\src\Time\Clock.cpp" />
     <ClCompile Include="ModuleDebugDraw.cpp" />
     <ClCompile Include="ModuleTexture.cpp" />
+    <ClCompile Include="ModuleEngineCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="debugdraw.h" />
     <ClInclude Include="ModuleTexture.h" />
+    <ClInclude Include="ModuleEngineCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\MathGeoLib\src\Geometry\KDTree.inl" />

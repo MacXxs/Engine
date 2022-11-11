@@ -30,38 +30,38 @@ int main(int argc, char ** argv)
 		{
 		case MAIN_CREATION:
 
-			ENGINGE_LOG("Application Creation --------------");
+			ENGINE_LOG("Application Creation --------------");
 			App = new Application();
 			state = MAIN_INIT;
 			break;
 
 		case MAIN_INIT:
-			ENGINGE_LOG("Application Init --------------");
+			ENGINE_LOG("Application Init --------------");
 			if (App->Init() == false)
 			{
-				ENGINGE_LOG("Application Init exits with error -----");
+				ENGINE_LOG("Application Init exits with error -----");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_START;
-				ENGINGE_LOG("Application Update --------------");
+				ENGINE_LOG("Application Update --------------");
 			}
 
 			break;
 
 		case MAIN_START:
 
-			ENGINGE_LOG("Application Start --------------");
+			ENGINE_LOG("Application Start --------------");
 			if (App->Start() == false)
 			{
-				ENGINGE_LOG("Application Init exits with error -----");
+				ENGINE_LOG("Application Init exits with error -----");
 				state = MAIN_EXIT;
 			}
 			else
 			{
 				state = MAIN_UPDATE;
-				ENGINGE_LOG("Application Update --------------");
+				ENGINE_LOG("Application Update --------------");
 			}
 
 			break;
@@ -72,7 +72,7 @@ int main(int argc, char ** argv)
 
 			if (update_return == UPDATE_ERROR)
 			{
-				ENGINGE_LOG("Application Update exits with error -----");
+				ENGINE_LOG("Application Update exits with error -----");
 				state = MAIN_EXIT;
 			}
 
@@ -83,10 +83,10 @@ int main(int argc, char ** argv)
 
 		case MAIN_FINISH:
 
-			ENGINGE_LOG("Application CleanUp --------------");
+			ENGINE_LOG("Application CleanUp --------------");
 			if (App->CleanUp() == false)
 			{
-				ENGINGE_LOG("Application CleanUp exits with error -----");
+				ENGINE_LOG("Application CleanUp exits with error -----");
 			}
 			else
 				main_return = EXIT_SUCCESS;
@@ -100,6 +100,6 @@ int main(int argc, char ** argv)
 	}
 
 	delete App;
-	ENGINGE_LOG("Bye :)\n");
+	ENGINE_LOG("Bye :)\n");
 	return main_return;
 }
