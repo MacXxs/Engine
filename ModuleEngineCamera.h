@@ -7,10 +7,14 @@
 #include "Libraries/MathGeoLib/src/Math/float4x4.h"
 
 #define DEFAULT_SPEED 0.05f
+#define SHIFT_ACCELERATION 2.f
+#define WHEEL_ACCELERATION 10.f
 
-enum class camera_movement { MOVE_FORWARD, MOVE_BACKWARDS, 
-					   MOVE_LEFT,    MOVE_RIGHT,
-					   MOVE_UP,		 MOVE_DOWN};
+enum class camera_movement { 
+	MOVE_FORWARD, MOVE_BACKWARDS, 
+	MOVE_LEFT,    MOVE_RIGHT,
+	MOVE_UP,	  MOVE_DOWN
+};
 
 class ModuleEngineCamera : public Module
 {

@@ -48,13 +48,13 @@ update_status ModuleInput::Update()
     }
     if (keyboard[SDL_SCANCODE_LSHIFT])
     {
-        App->engineCamera->Run(2.f);
+        App->engineCamera->Run(SHIFT_ACCELERATION);
     }
     if (keyboard[SDL_SCANCODE_W])
     {
         App->engineCamera->Move(camera_movement::MOVE_FORWARD);
     }
-    if (keyboard[SDL_SCANCODE_S])
+    else if (keyboard[SDL_SCANCODE_S])
     {
         App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
     }
@@ -62,7 +62,7 @@ update_status ModuleInput::Update()
     {
         App->engineCamera->Move(camera_movement::MOVE_UP);
     }
-    if (keyboard[SDL_SCANCODE_E])
+    else if (keyboard[SDL_SCANCODE_E])
     {
         App->engineCamera->Move(camera_movement::MOVE_DOWN);
     }
@@ -70,7 +70,7 @@ update_status ModuleInput::Update()
     {
         App->engineCamera->Move(camera_movement::MOVE_LEFT);
     }
-    if (keyboard[SDL_SCANCODE_D])
+    else if (keyboard[SDL_SCANCODE_D])
     {
         App->engineCamera->Move(camera_movement::MOVE_RIGHT);
     }
@@ -85,9 +85,24 @@ update_status ModuleInput::Update()
         {
             case SDL_QUIT:
                 return UPDATE_STOP;
+
             case SDL_WINDOWEVENT:
                 if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                     App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
+                break;
+
+            case SDL_MOUSEWHEEL:
+                if (sdlEvent.wheel.y > 0)
+                {
+                    App->engineCamera->Run(WHEEL_ACCELERATION);
+                    App->engineCamera->Move(camera_movement::MOVE_FORWARD);
+                }
+                else if (sdlEvent.wheel.y < 0)
+                {
+                    App->engineCamera->Run(WHEEL_ACCELERATION);
+                    App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
+                }
+
                 break;
         }
     }
