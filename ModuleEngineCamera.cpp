@@ -2,6 +2,8 @@
 #include "ModuleEngineCamera.h"
 #include "ModuleWindow.h"
 
+#include "Libraries/MathGeoLib/src/Math/float3x3.h"
+
 ModuleEngineCamera::ModuleEngineCamera()
 {
 };
@@ -65,6 +67,36 @@ void ModuleEngineCamera::Move(camera_movement move)
 	frustum.SetPos(position);
 }
 
+void ModuleEngineCamera::Rotate(camera_movement move)
+{
+	float3x3 rotationDeltaMatrix;
+
+	switch (move)
+	{
+	case camera_movement::ROTATE_UP:
+		rotationDeltaMatrix = float3x3::RotateX(DegToRad(ROTATION_DEGREE));
+		break;
+
+	case camera_movement::ROTATE_DOWN:
+		rotationDeltaMatrix = float3x3::RotateX(DegToRad(-ROTATION_DEGREE));
+		break;
+
+	case camera_movement::ROTATE_LEFT:
+		rotationDeltaMatrix = float3x3::RotateY(DegToRad(ROTATION_DEGREE));
+		break;
+
+	case camera_movement::ROTATE_RIGHT:
+		rotationDeltaMatrix = float3x3::RotateY(DegToRad(-ROTATION_DEGREE));
+		break;
+	}
+
+	vec oldFront = frustum.Front().Normalized();
+	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
+
+	vec oldUp = frustum.Up().Normalized();
+	frustum.SetUp(rotationDeltaMatrix.MulDir(oldUp));
+}
+
 void ModuleEngineCamera::Run(float acceleration)
 {
 	if (speed == DEFAULT_SPEED)
@@ -104,7 +136,7 @@ float4x4 ModuleEngineCamera::GetProjectionMatrix() const
 	return frustum.ProjectionMatrix();
 }
 
-float4x4 ModuleEngineCamera::GetViewMatrix() const
+float4x4 ModuleEngineCamera::GetViewMatrix()
 {
 	return frustum.ViewMatrix();
 }

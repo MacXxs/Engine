@@ -7,13 +7,18 @@
 #include "Libraries/MathGeoLib/src/Math/float4x4.h"
 
 #define DEFAULT_SPEED 0.05f
+
 #define SHIFT_ACCELERATION 2.f
 #define WHEEL_ACCELERATION 10.f
 
+#define ROTATION_DEGREE 1
+
 enum class camera_movement { 
-	MOVE_FORWARD, MOVE_BACKWARDS, 
-	MOVE_LEFT,    MOVE_RIGHT,
-	MOVE_UP,	  MOVE_DOWN
+	MOVE_FORWARD,	MOVE_BACKWARDS, 
+	MOVE_LEFT,		MOVE_RIGHT,
+	MOVE_UP,		MOVE_DOWN,
+	ROTATE_UP,		ROTATE_DOWN,
+	ROTATE_LEFT,	ROTATE_RIGHT
 };
 
 class ModuleEngineCamera : public Module
@@ -25,6 +30,7 @@ public:
 	bool Init() override;
 
 	void Move(camera_movement move);
+	void Rotate(camera_movement move);
 	void Run(float acceleration);
 
 #pragma region setters
@@ -38,7 +44,7 @@ public:
 
 #pragma region getters
 	float4x4 GetProjectionMatrix() const;
-	float4x4 GetViewMatrix() const;
+	float4x4 GetViewMatrix();
 #pragma endregion getters
 
 private:

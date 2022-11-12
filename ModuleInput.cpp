@@ -54,7 +54,7 @@ update_status ModuleInput::Update()
     {
         App->engineCamera->Move(camera_movement::MOVE_FORWARD);
     }
-    else if (keyboard[SDL_SCANCODE_S])
+    if (keyboard[SDL_SCANCODE_S])
     {
         App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
     }
@@ -62,7 +62,7 @@ update_status ModuleInput::Update()
     {
         App->engineCamera->Move(camera_movement::MOVE_UP);
     }
-    else if (keyboard[SDL_SCANCODE_E])
+    if (keyboard[SDL_SCANCODE_E])
     {
         App->engineCamera->Move(camera_movement::MOVE_DOWN);
     }
@@ -70,9 +70,25 @@ update_status ModuleInput::Update()
     {
         App->engineCamera->Move(camera_movement::MOVE_LEFT);
     }
-    else if (keyboard[SDL_SCANCODE_D])
+    if (keyboard[SDL_SCANCODE_D])
     {
         App->engineCamera->Move(camera_movement::MOVE_RIGHT);
+    }
+    if (keyboard[SDL_SCANCODE_UP])
+    {
+        App->engineCamera->Rotate(camera_movement::ROTATE_DOWN);
+    }
+    if (keyboard[SDL_SCANCODE_DOWN])
+    {
+        App->engineCamera->Rotate(camera_movement::ROTATE_UP);
+    }
+    if (keyboard[SDL_SCANCODE_LEFT])
+    {
+        App->engineCamera->Rotate(camera_movement::ROTATE_LEFT);
+    }
+    if (keyboard[SDL_SCANCODE_RIGHT])
+    {
+        App->engineCamera->Rotate(camera_movement::ROTATE_RIGHT);
     }
 
     SDL_Event sdlEvent;
