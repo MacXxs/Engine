@@ -35,8 +35,10 @@ public:
 	ModuleEditor* editor = nullptr;
 	ModuleEngineCamera* engineCamera = nullptr;
 
-private:
+public:
+	float deltaTime = 0.f;
 
+private:
 	std::list<Module*> modules;
 
 };

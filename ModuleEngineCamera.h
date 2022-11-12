@@ -6,7 +6,8 @@
 #include "Libraries/MathGeoLib/src/Geometry/Frustum.h"
 #include "Libraries/MathGeoLib/src/Math/float4x4.h"
 
-#define DEFAULT_SPEED 0.05f
+#define DEFAULT_MOVE_SPEED 0.05f
+#define DEFAULT_ROTATION_SPEED 0.8f
 
 #define SHIFT_ACCELERATION 2.f
 #define WHEEL_ACCELERATION 10.f
@@ -29,12 +30,16 @@ public:
 
 	bool Init() override;
 
+#pragma region interaction
 	void Move(camera_movement move);
 	void Rotate(camera_movement move);
+	void MouseRotate(int xrel, int yrel);
 	void Run(float acceleration);
+#pragma endregion interaction
 
 #pragma region setters
-	void SetFOV(float fov);
+	void SetHFOV(float fov);
+	void SetVFOV(float fov);
 	void SetAspectRatio(float aspect);
 	void SetPlaneDistance(float zNear, float zFar);
 	void SetPosition(float3 position);
@@ -45,6 +50,9 @@ public:
 #pragma region getters
 	float4x4 GetProjectionMatrix() const;
 	float4x4 GetViewMatrix();
+
+	float GetHFOV();
+	float GetVFOV();
 #pragma endregion getters
 
 private:
@@ -52,6 +60,7 @@ private:
 	Frustum frustum;
 	float3 position;
 	float aspectRatio;
-	float speed;
+	float moveSpeed;
+	float rotationSpeed;
 };
 

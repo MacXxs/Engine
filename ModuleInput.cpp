@@ -99,28 +99,36 @@ update_status ModuleInput::Update()
 
         switch (sdlEvent.type)
         {
-            case SDL_QUIT:
-                return UPDATE_STOP;
+        case SDL_QUIT:
+            return UPDATE_STOP;
 
-            case SDL_WINDOWEVENT:
-                if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
-                    App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
-                break;
+        case SDL_WINDOWEVENT:
+            if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED ||
+                sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+                App->renderer->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
 
-            case SDL_MOUSEWHEEL:
-                if (sdlEvent.wheel.y > 0)
-                {
-                    App->engineCamera->Run(WHEEL_ACCELERATION);
-                    App->engineCamera->Move(camera_movement::MOVE_FORWARD);
-                }
-                else if (sdlEvent.wheel.y < 0)
-                {
-                    App->engineCamera->Run(WHEEL_ACCELERATION);
-                    App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
-                }
+            break;
 
-                break;
+        case SDL_MOUSEWHEEL:
+            if (sdlEvent.wheel.y > 0)
+            {
+                App->engineCamera->Run(WHEEL_ACCELERATION);
+                App->engineCamera->Move(camera_movement::MOVE_FORWARD);
+            }
+            else if (sdlEvent.wheel.y < 0)
+            {
+                App->engineCamera->Run(WHEEL_ACCELERATION);
+                App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
+            }
+
+            break;
         }
+
+        if (sdlEvent.type == SDL_MOUSEMOTION && sdlEvent.motion.state & SDL_BUTTON_RMASK)
+        {
+            App->engineCamera->MouseRotate(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
+        }
+
     }
 
     keyboard = SDL_GetKeyboardState(NULL);

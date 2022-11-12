@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
+#include "ModuleEngineCamera.h"
 #include "GL/glew.h"
 #include "SDL.h"
 
@@ -131,5 +132,6 @@ bool ModuleRender::CleanUp()
 
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
+	App->engineCamera->SetAspectRatio(float(width) / height);
 }
 

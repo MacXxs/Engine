@@ -4,6 +4,7 @@
 #include "Globals.h"
 
 #include "SDL/include/SDL.h"
+
 #pragma comment( lib, "SDL/lib/x64/SDL2.lib" )
 #pragma comment( lib, "SDL/lib/x64/SDL2main.lib" )
 
@@ -24,8 +25,12 @@ int main(int argc, char ** argv)
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
+	Uint64 startTick;
+
 	while (state != MAIN_EXIT)
 	{
+		startTick = SDL_GetPerformanceCounter();
+
 		switch (state)
 		{
 		case MAIN_CREATION:
@@ -96,6 +101,8 @@ int main(int argc, char ** argv)
 			break;
 
 		}
+
+		App->deltaTime = (SDL_GetPerformanceCounter() - startTick) / 100000.f;
 
 	}
 
