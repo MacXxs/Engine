@@ -11,7 +11,6 @@ ModuleEngineCamera::~ModuleEngineCamera() {};
 
 bool ModuleEngineCamera::Init()
 {
-	bool ret = true;
 	int w, h;
 
 	SDL_GetWindowSize(App->window->window, &w, &h);
@@ -21,15 +20,17 @@ bool ModuleEngineCamera::Init()
 	frustum.SetViewPlaneDistances(0.1f, 100.0f);
 	frustum.SetHorizontalFovAndAspectRatio(math::DegToRad(90), aspectRatio);
 
+	acceleration = DEFAULT_SHIFT_ACCELERATION;
 	moveSpeed = DEFAULT_MOVE_SPEED;
 	rotationSpeed = DEFAULT_ROTATION_SPEED;
+
 	position = float3(0.f, 2.f, 5.f);
 
 	frustum.SetPos(position);
 	frustum.SetFront(-float3::unitZ);
 	frustum.SetUp(float3::unitY);
 
-	return ret;
+	return true;
 }
 
 void ModuleEngineCamera::Move(camera_movement move)
@@ -37,33 +38,31 @@ void ModuleEngineCamera::Move(camera_movement move)
 	switch (move)
 	{
 	case camera_movement::MOVE_FORWARD:
-		position = position + frustum.Front().Normalized() * moveSpeed * App->deltaTime;
+		position = position + frustum.Front().Normalized() * moveSpeed * acceleration * App->deltaTime;
 		break;
 
 	case camera_movement::MOVE_BACKWARDS:
-		position = position + -(frustum.Front().Normalized()) * moveSpeed * App->deltaTime;
+		position = position + -(frustum.Front().Normalized()) * moveSpeed * acceleration * App->deltaTime;
 		break;
 
 	case camera_movement::MOVE_LEFT:
-		position = position + -(frustum.WorldRight()) * moveSpeed * App->deltaTime;
+		position = position + -(frustum.WorldRight()) * moveSpeed * acceleration * App->deltaTime;
 		break;
 
 	case camera_movement::MOVE_RIGHT:
-		position = position + frustum.WorldRight() * moveSpeed * App->deltaTime;
+		position = position + frustum.WorldRight() * moveSpeed * acceleration * App->deltaTime;
 		break;
 
 	case camera_movement::MOVE_UP:
-		position = position + frustum.Up() * moveSpeed * App->deltaTime;
+		position = position + frustum.Up() * moveSpeed * acceleration * App->deltaTime;
 		break;
 
 	case camera_movement::MOVE_DOWN:
-		position = position + -(frustum.Up()) * moveSpeed * App->deltaTime;
+		position = position + -(frustum.Up()) * moveSpeed * acceleration * App->deltaTime;
 		break;
 	}
 	
 	frustum.SetPos(position);
-
-	moveSpeed = DEFAULT_MOVE_SPEED;
 }
 
 void ModuleEngineCamera::Rotate(camera_movement move)
@@ -75,24 +74,26 @@ void ModuleEngineCamera::Rotate(camera_movement move)
 	switch (move)
 	{
 	case camera_movement::ROTATE_UP:
-		if (rotationAngle - ROTATION_DEGREE > 0) pitch = DegToRad(ROTATION_DEGREE);
+		if (rotationAngle - DEFAULT_ROTATION_DEGREE > 0) pitch = 
+			math::DegToRad(DEFAULT_ROTATION_DEGREE);
 		break;
 
 	case camera_movement::ROTATE_DOWN:
-		if (rotationAngle + ROTATION_DEGREE < 180) pitch = DegToRad(-ROTATION_DEGREE);
+		if (rotationAngle + DEFAULT_ROTATION_DEGREE < 180) pitch = 
+			math::DegToRad(-DEFAULT_ROTATION_DEGREE);
 		break;
 
 	case camera_movement::ROTATE_LEFT:
-		yaw = DegToRad(ROTATION_DEGREE);
+		yaw = math::DegToRad(DEFAULT_ROTATION_DEGREE);
 		break;
 
 	case camera_movement::ROTATE_RIGHT:
-		yaw = DegToRad(-ROTATION_DEGREE);
+		yaw = math::DegToRad(-DEFAULT_ROTATION_DEGREE);
 		break;
 	}
 
-	Quat pitchQuat(frustum.WorldRight(), pitch * App->deltaTime * rotationSpeed);
-	Quat yawQuat(float3::unitY, yaw * App->deltaTime * rotationSpeed);
+	Quat pitchQuat(frustum.WorldRight(), pitch * App->deltaTime * rotationSpeed * acceleration);
+	Quat yawQuat(float3::unitY, yaw * App->deltaTime * rotationSpeed * acceleration);
 
 	float3x3 rotationMatrixX = float3x3::FromQuat(pitchQuat);
 	float3x3 rotationMatrixY = float3x3::FromQuat(yawQuat);
@@ -103,8 +104,6 @@ void ModuleEngineCamera::Rotate(camera_movement move)
 
 	vec oldFront = frustum.Front().Normalized();
 	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
-
-	rotationSpeed = DEFAULT_ROTATION_SPEED;
 }
 
 void ModuleEngineCamera::MouseRotate(int xrel, int yrel)
@@ -113,10 +112,10 @@ void ModuleEngineCamera::MouseRotate(int xrel, int yrel)
 
 	float rotationAngle = RadToDeg(frustum.Front().Normalized().AngleBetween(float3::unitY));
 
-	if (yrel > 0) { if (rotationAngle - yrel > 0) pitch = DegToRad(yrel); }
-	else if (yrel < 0) { if (rotationAngle - yrel < 180) pitch = DegToRad(yrel); }
+	if (yrel > 0) { if (rotationAngle - yrel > 0) pitch = math::DegToRad(yrel); }
+	else if (yrel < 0) { if (rotationAngle - yrel < 180) pitch = math::DegToRad(yrel); }
 	
-	yaw = DegToRad(-xrel);
+	yaw = math::DegToRad(-xrel);
 
 	Quat pitchQuat(frustum.WorldRight(), pitch * App->deltaTime);
 	Quat yawQuat(float3::unitY, yaw * App->deltaTime);
@@ -130,20 +129,16 @@ void ModuleEngineCamera::MouseRotate(int xrel, int yrel)
 
 	vec oldFront = frustum.Front().Normalized();
 	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
-
-	rotationSpeed = DEFAULT_ROTATION_SPEED;
 }
 
-void ModuleEngineCamera::Run(float acceleration)
+void ModuleEngineCamera::Run()
 {
-	if (moveSpeed == DEFAULT_MOVE_SPEED)
-	{
-		moveSpeed *= acceleration;
-	}
-	if (rotationSpeed == DEFAULT_ROTATION_SPEED)
-	{
-		rotationSpeed *= acceleration;
-	}
+	acceleration = DEFAULT_SHIFT_ACCELERATION;
+}
+
+void ModuleEngineCamera::Walk()
+{
+	acceleration = 1.f;
 }
 
 void ModuleEngineCamera::SetHFOV(float fov)
@@ -177,23 +172,53 @@ void ModuleEngineCamera::SetOrientation(float3 orientation)
 	frustum.SetUp(orientation);
 }
 
+void ModuleEngineCamera::SetMoveSpeed(float speed)
+{
+	moveSpeed = speed;
+}
+
+void ModuleEngineCamera::SetRotationSpeed(float speed)
+{
+	rotationSpeed = speed;
+}
+
 float4x4 ModuleEngineCamera::GetProjectionMatrix() const
 {
 	//return frustum.ProjectionMatrix().Transposed(); // Needs to be transposed to use withGL
 	return frustum.ProjectionMatrix();
 }
 
-float4x4 ModuleEngineCamera::GetViewMatrix()
+float4x4 ModuleEngineCamera::GetViewMatrix() const
 {
 	return frustum.ViewMatrix();
 }
 
-float ModuleEngineCamera::GetHFOV()
+float ModuleEngineCamera::GetHFOV() const
 {
 	return math::RadToDeg(frustum.HorizontalFov());
 }
 
-float ModuleEngineCamera::GetVFOV()
+float ModuleEngineCamera::GetVFOV() const
 {
 	return math::RadToDeg(frustum.VerticalFov());
+}
+
+float ModuleEngineCamera::GetZNear() const
+{
+	return frustum.NearPlaneDistance();
+}
+
+float ModuleEngineCamera::GetZFar() const
+{
+	return frustum.FarPlaneDistance();
+}
+
+float ModuleEngineCamera::GetMoveSpeed() const
+{
+	return moveSpeed;
+}
+
+float ModuleEngineCamera::GetRotationSpeed() const
+{
+	return rotationSpeed;
 }

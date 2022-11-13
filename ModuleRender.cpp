@@ -60,12 +60,14 @@ ModuleRender::~ModuleRender()
 bool ModuleRender::Init()
 {
 	ENGINE_LOG("Creating Renderer context");
-	
+
 	/*App->window->window = SDL_CreateWindow(
 		"SDL2/OpenGL Demo", 0, 0, SCREEN_WIDTH, SCREEN_WIDTH,
 		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);*/
 
 	this->context = SDL_GL_CreateContext(App->window->window);
+
+	this->backgroundColor = float4(0.3f, 0.3f, 0.3f, 1.f);
 
 	GLenum err = glewInit();
 	ENGINE_LOG("glew error %s", glewGetErrorString(err));
@@ -98,7 +100,8 @@ update_status ModuleRender::PreUpdate()
 
 	glViewport(0, 0, width, height);
 
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(this->backgroundColor.x, this->backgroundColor.y, 
+				 this->backgroundColor.z, this->backgroundColor.w);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -133,5 +136,15 @@ bool ModuleRender::CleanUp()
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
 	App->engineCamera->SetAspectRatio(float(width) / height);
+}
+
+void ModuleRender::SetBackgroundColor(float4 color)
+{
+	backgroundColor = color;
+}
+
+float4 ModuleRender::GetBackgroundColor() const
+{
+	return backgroundColor;
 }
 

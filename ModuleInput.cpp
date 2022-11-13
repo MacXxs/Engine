@@ -48,7 +48,11 @@ update_status ModuleInput::Update()
     }
     if (keyboard[SDL_SCANCODE_LSHIFT])
     {
-        App->engineCamera->Run(SHIFT_ACCELERATION);
+        App->engineCamera->Run();
+    }
+    else if (!keyboard[SDL_SCANCODE_LSHIFT])
+    {
+        App->engineCamera->Walk();
     }
     if (keyboard[SDL_SCANCODE_W])
     {
@@ -112,12 +116,12 @@ update_status ModuleInput::Update()
         case SDL_MOUSEWHEEL:
             if (sdlEvent.wheel.y > 0)
             {
-                App->engineCamera->Run(WHEEL_ACCELERATION);
+                App->engineCamera->Run();
                 App->engineCamera->Move(camera_movement::MOVE_FORWARD);
             }
             else if (sdlEvent.wheel.y < 0)
             {
-                App->engineCamera->Run(WHEEL_ACCELERATION);
+                App->engineCamera->Run();
                 App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
             }
 

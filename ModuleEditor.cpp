@@ -8,6 +8,8 @@
 #include "Libraries/ImGui/imgui_impl_sdl.h"
 #include "Libraries/ImGui/imgui_impl_opengl3.h"
 
+static bool windowOpened = false;
+
 ModuleEditor::ModuleEditor() {}
 
 ModuleEditor::~ModuleEditor() {}
@@ -53,31 +55,60 @@ update_status ModuleEditor::Update()
 {
 	if (ImGui::BeginMainMenuBar())
 	{
-		if (ImGui::BeginMenu("Help"))
+		if (ImGui::BeginMenu("Settings"))
 		{
-			if (ImGui::MenuItem("Open")) {}
-			if (ImGui::MenuItem("Save")) {}
+			if (ImGui::MenuItem("Camera")) windowOpened = true;
+
 			ImGui::EndMenu();
 		}
 
 		ImGui::EndMainMenuBar();
 	}
-	
-	int hfov = App->engineCamera->GetHFOV();
-	int vfov = App->engineCamera->GetVFOV();
 
-	if (ImGui::Begin("Camera Settings"))
+	if (windowOpened)
 	{
-		if (ImGui::SliderInt("Horizontal FOV", &hfov, 60, 120))
+		if (ImGui::Begin("Camera Settings", &windowOpened, ImGuiWindowFlags_NoCollapse))
 		{
-			App->engineCamera->SetHFOV(math::DegToRad(hfov));
-		}
-		if (ImGui::SliderInt("Vertical FOV", &vfov, 60, 120))
-		{
-			App->engineCamera->SetVFOV(math::DegToRad(vfov));
-		}
+			int hfov = App->engineCamera->GetHFOV();
+			int vfov = App->engineCamera->GetVFOV();
+			float znear = App->engineCamera->GetZNear();
+			float zfar = App->engineCamera->GetZFar();
 
-		ImGui::End();
+			if (ImGui::CollapsingHeader("Frustum"))
+			{
+				if (ImGui::SliderInt("Horizontal FOV", &hfov, 60, 120))
+					App->engineCamera->SetHFOV(math::DegToRad(hfov));
+				if (ImGui::SliderInt("Vertical FOV", &vfov, 46, 104))
+					App->engineCamera->SetVFOV(math::DegToRad(vfov));
+
+				if (ImGui::InputFloat("Z near", &znear, 0.5f, 0.0f))
+					App->engineCamera->SetPlaneDistance(znear, zfar);
+				if (ImGui::InputFloat("Z far", &zfar, 0.5f, 0.0f))
+					App->engineCamera->SetPlaneDistance(znear, zfar);
+			}
+
+			float movementSpeed = App->engineCamera->GetMoveSpeed();
+			float rotationSpeed = App->engineCamera->GetRotationSpeed();
+
+			if (ImGui::CollapsingHeader("Movement"))
+			{
+				if (ImGui::SliderFloat("Movement Speed", &movementSpeed, DEFAULT_MOVE_SPEED, 0.5f))
+					App->engineCamera->SetMoveSpeed(movementSpeed);
+				if (ImGui::SliderFloat("Rotation Speed", &rotationSpeed, DEFAULT_ROTATION_SPEED, 5.f))
+					App->engineCamera->SetRotationSpeed(rotationSpeed);
+			}
+
+			static float4 color = App->renderer->GetBackgroundColor();
+
+			if (ImGui::CollapsingHeader("Scene"))
+			{
+				ImGui::Text("Background Color");
+				if (ImGui::ColorEdit3("MyColor##1", (float*)&color))
+					App->renderer->SetBackgroundColor(color);
+			}
+
+			ImGui::End();
+		}
 	}
 
 	return UPDATE_CONTINUE;

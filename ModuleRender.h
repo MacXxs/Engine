@@ -2,6 +2,8 @@
 #include "Module.h"
 #include "Globals.h"
 
+#include "Libraries/MathGeoLib/src/Math/float4.h"
+
 struct SDL_Texture;
 struct SDL_Renderer;
 struct SDL_Rect;
@@ -13,14 +15,21 @@ public:
 	~ModuleRender();
 
 	bool Init();
+	bool CleanUp();
+
 	update_status PreUpdate();
 	update_status Update();
 	update_status PostUpdate();
-	bool CleanUp();
+
 	void WindowResized(unsigned width, unsigned height);
+
+	void SetBackgroundColor(float4 color);
+
+	float4 GetBackgroundColor() const;
 
 private:
 	void * context;
+	float4 backgroundColor;
 
 	friend class ModuleEditor;
 };
