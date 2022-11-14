@@ -3,6 +3,6 @@
 
 class ModuleTexture : public Module
 {
-
+	bool Init();
 };
 

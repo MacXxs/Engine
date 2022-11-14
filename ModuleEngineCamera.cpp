@@ -74,12 +74,12 @@ void ModuleEngineCamera::Rotate(camera_movement move)
 	switch (move)
 	{
 	case camera_movement::ROTATE_UP:
-		if (rotationAngle - DEFAULT_ROTATION_DEGREE > 0) pitch = 
+		if (rotationAngle - rotationSpeed * acceleration > 0) pitch = 
 			math::DegToRad(DEFAULT_ROTATION_DEGREE);
 		break;
 
 	case camera_movement::ROTATE_DOWN:
-		if (rotationAngle + DEFAULT_ROTATION_DEGREE < 180) pitch = 
+		if (rotationAngle + rotationSpeed * acceleration < 180) pitch =
 			math::DegToRad(-DEFAULT_ROTATION_DEGREE);
 		break;
 
