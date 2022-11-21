@@ -6,11 +6,10 @@
 #include "Libraries/MathGeoLib/src/Geometry/Frustum.h"
 #include "Libraries/MathGeoLib/src/Math/float4x4.h"
 
-#define DEFAULT_MOVE_SPEED 0.05f
-#define DEFAULT_ROTATION_SPEED 0.8f
+#define DEFAULT_MOVE_SPEED 5.f
+#define DEFAULT_ROTATION_DEGREE 25
+#define DEFAULT_ROTATION_SPEED 5.f
 #define DEFAULT_SHIFT_ACCELERATION 2.f
-#define DEFAULT_WHEEL_ACCELERATION 10.f
-#define DEFAULT_ROTATION_DEGREE 1
 
 enum class camera_movement { 
 	MOVE_FORWARD,	MOVE_BACKWARDS, 

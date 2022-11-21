@@ -29,7 +29,7 @@ int main(int argc, char ** argv)
 
 	while (state != MAIN_EXIT)
 	{
-		startTick = SDL_GetPerformanceCounter();
+		startTick = SDL_GetTicks();
 
 		switch (state)
 		{
@@ -102,7 +102,7 @@ int main(int argc, char ** argv)
 
 		}
 
-		App->deltaTime = (SDL_GetPerformanceCounter() - startTick) / 100000.f;
+		App->deltaTime = (SDL_GetTicks() - startTick) / 1000.f;
 
 	}
 
