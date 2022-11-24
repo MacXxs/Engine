@@ -1,9 +1,10 @@
-#include "ModuleRenderExercise.h"
+﻿#include "ModuleRenderExercise.h"
 #include "ModuleProgram.h"
 #include "Application.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleEngineCamera.h"
 #include "ModuleWindow.h"
+#include "ModuleTexture.h"
 
 //#include "debug_draw.hpp"
 
@@ -23,7 +24,23 @@ bool ModuleRenderExercise::Start()
 
 	bool ret = true;
 
-	float vtx_data[] = { 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f };
+	float vtx_data[] = { 
+		0.f, 0.f, 0.f,
+		1.f, 0.f, 0.f,
+		1.f, 1.f, 0.f,
+
+		1.f, 1.f, 0.f,
+		0.f, 1.f, 0.f,
+		0.f, 0.f, 0.f,
+
+		0.f, 0.f,
+		1.f, 0.f,
+		1.f, 1.f,
+
+		1.f, 1.f,
+		0.f, 1.f,
+		0.f, 0.f
+	};
 
 	glGenBuffers(1, &this->vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo); // set vbo active
@@ -92,8 +109,17 @@ void ModuleRenderExercise::renderTriangle()
 	// size = 3 float per vertex
 	// stride = 0 is equivalent to stride = sizeof(float)*3
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0,
+		(void*)(sizeof(float) * 3 * 6) // buffer offset
+	);
+
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, App->texture->texture);
+
 	// 1 triangle to draw = 3 vertices
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	App->debug->Draw(view, proj, w, h);
 }
