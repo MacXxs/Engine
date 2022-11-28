@@ -22,7 +22,7 @@ Application::Application()
 	modules.push_back(renderer = new ModuleRender());
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(engineCamera = new ModuleEngineCamera());
-	modules.push_back(texture = new ModuleTexture());
+	modules.push_back(textures = new ModuleTexture());
 	modules.push_back(object = new ModuleRenderExercise());
 }
 

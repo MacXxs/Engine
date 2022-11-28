@@ -14,6 +14,8 @@ public:
 
 	update_status Update();
 
+	GLuint Load(const char* fileName);
+
 public:
 	GLuint texture;
 };

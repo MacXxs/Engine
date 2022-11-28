@@ -54,6 +54,8 @@ bool ModuleRenderExercise::Start()
 
 	App->program->CreateProgram(vertexShader, fragmentShader);
 
+	App->textures->Load("Assets/textures/baboon.ppm");
+
 	return ret;
 }
 
@@ -111,12 +113,12 @@ void ModuleRenderExercise::renderTriangle()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0,
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2,
 		(void*)(sizeof(float) * 3 * 6) // buffer offset
 	);
 
 	glActiveTexture(GL_TEXTURE5);
-	glBindTexture(GL_TEXTURE_2D, App->texture->texture);
+	glBindTexture(GL_TEXTURE_2D, App->textures->texture);
 
 	// 1 triangle to draw = 3 vertices
 	glDrawArrays(GL_TRIANGLES, 0, 6);

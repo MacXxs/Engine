@@ -35,7 +35,7 @@ public:
 	ModuleDebugDraw* debug = nullptr;
 	ModuleEditor* editor = nullptr;
 	ModuleEngineCamera* engineCamera = nullptr;
-	ModuleTexture* texture = nullptr;
+	ModuleTexture* textures = nullptr;
 
 public:
 	float deltaTime = 0.f;
