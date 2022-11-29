@@ -37,6 +37,7 @@ bool ModuleEditor::Start()
 
 bool ModuleEditor::CleanUp()
 {
+	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
@@ -48,6 +49,7 @@ update_status ModuleEditor::PreUpdate()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame(App->window->window);
 	ImGui::NewFrame();
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -92,9 +94,11 @@ update_status ModuleEditor::Update()
 
 			if (ImGui::CollapsingHeader("Movement"))
 			{
-				if (ImGui::SliderFloat("Movement Speed", &movementSpeed, DEFAULT_MOVE_SPEED, 0.5f))
+				if (ImGui::SliderFloat("Movement Speed", &movementSpeed, 
+										DEFAULT_MOVE_SPEED, DEFAULT_MOVE_SPEED * 10.f))
 					App->engineCamera->SetMoveSpeed(movementSpeed);
-				if (ImGui::SliderFloat("Rotation Speed", &rotationSpeed, DEFAULT_ROTATION_SPEED, 5.f))
+				if (ImGui::SliderFloat("Rotation Speed", &rotationSpeed, 
+										DEFAULT_ROTATION_SPEED, DEFAULT_ROTATION_SPEED * 10.f))
 					App->engineCamera->SetRotationSpeed(rotationSpeed);
 			}
 

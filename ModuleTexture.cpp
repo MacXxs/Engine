@@ -156,7 +156,8 @@ GLuint ModuleTexture::Load(const char* fileName)
 		assert(false && "Unsupported format");
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, md.width, md.height, 0, format, type, flippedImg->GetPixels());
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,flippedImg->GetMetadata().width, 
+		flippedImg->GetMetadata().height, 0, format, type, flippedImg->GetPixels());
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	return texture;
