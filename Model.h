@@ -17,6 +17,7 @@ public:
 	void Load(const char* fileName);
 	void LoadMaterials(const aiScene* scene);
 	void LoadMeshes(const aiScene* scene);
+	void Draw();
 
 private:
 	std::vector<unsigned> textures;

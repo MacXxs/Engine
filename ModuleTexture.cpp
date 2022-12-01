@@ -97,7 +97,9 @@ GLuint ModuleTexture::Load(const char* fileName)
 {
 	GLuint texture;
 
-	std::string narrow_string(fileName);
+	std::string texturePath = TEXTURES_PATH + std::string(fileName);
+
+	std::string narrow_string(texturePath);
 	std::wstring wide_string = std::wstring(narrow_string.begin(), narrow_string.end());
 	const wchar_t* path = wide_string.c_str();
 

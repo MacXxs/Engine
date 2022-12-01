@@ -23,3 +23,6 @@ enum update_status
 #define RESIZABLE true
 #define VSYNC true
 #define TITLE "Super Awesome Engine"
+
+// Paths -------------------
+#define TEXTURES_PATH "Assets/textures/"

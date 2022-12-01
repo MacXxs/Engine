@@ -62,3 +62,11 @@ void Model::LoadMeshes(const aiScene* scene)
 		meshes.push_back(*mesh);
 	}
 }
+
+void Model::Draw()
+{
+	for (int i = 0; i < meshes.size(); ++i)
+	{
+		meshes[i].Draw(textures);
+	}
+}

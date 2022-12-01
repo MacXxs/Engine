@@ -2,6 +2,10 @@
 #include "Module.h"
 #include "Globals.h"
 
+#include "Model.h"
+
+#include <list>
+
 class ModuleRenderExercise : public Module
 {
 public:
@@ -18,4 +22,5 @@ public:
 
 public:
 	unsigned vbo;
+	std::list<Model> models;
 };

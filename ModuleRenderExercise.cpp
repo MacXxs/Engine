@@ -6,6 +6,8 @@
 #include "ModuleWindow.h"
 #include "ModuleTexture.h"
 
+#include "Model.h"
+
 //#include "debug_draw.hpp"
 
 #include <iostream>
@@ -24,7 +26,21 @@ bool ModuleRenderExercise::Start()
 
 	bool ret = true;
 
-	float vtx_data[] = { 
+	char* vertexSource = App->program->LoadShaderSource("Shaders/default_vertex.glsl");
+	char* fragmentSource = App->program->LoadShaderSource("Shaders/default_fragment.glsl");
+
+	unsigned vertexShader = App->program->CompileShader(GL_VERTEX_SHADER, vertexSource);
+	unsigned fragmentShader = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+
+	App->program->CreateProgram(vertexShader, fragmentShader);
+	
+	Model* bakerHouse = new Model;
+	bakerHouse->Load("Assets/models/BakerHouse.fbx");
+
+	models.push_back(*bakerHouse);
+
+	/*
+	float vtx_data[] = {
 		0.f, 0.f, 0.f,
 		1.f, 0.f, 0.f,
 		1.f, 1.f, 0.f,
@@ -46,15 +62,8 @@ bool ModuleRenderExercise::Start()
 	glBindBuffer(GL_ARRAY_BUFFER, this->vbo); // set vbo active
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtx_data), vtx_data, GL_STATIC_DRAW);
 
-	char* vertexSource = App->program->LoadShaderSource("Shaders/default_vertex.glsl");
-	char* fragmentSource = App->program->LoadShaderSource("Shaders/default_fragment.glsl");
-
-	unsigned vertexShader = App->program->CompileShader(GL_VERTEX_SHADER, vertexSource);
-	unsigned fragmentShader = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
-
-	App->program->CreateProgram(vertexShader, fragmentShader);
-
-	App->textures->Load("Assets/textures/baboon.ppm");
+	App->textures->Load("baboon.ppm");
+	*/
 
 	return ret;
 }
@@ -68,7 +77,18 @@ update_status ModuleRenderExercise::Update()
 {
 	update_status status = UPDATE_CONTINUE;
 
-	renderTriangle();
+	//renderTriangle();
+	
+	for (auto it = models.begin(); it != models.end(); ++it)
+	{
+		it->Draw();
+	}
+	
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	App->debug->Draw(App->engineCamera->GetViewMatrix(), 
+		App->engineCamera->GetProjectionMatrix(), w, h);
 
 	return status;
 }
