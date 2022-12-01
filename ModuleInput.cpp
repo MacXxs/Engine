@@ -5,7 +5,6 @@
 #include "ModuleProgram.h"
 #include "ModuleEngineCamera.h"
 
-#include "SDL/include/SDL.h"
 #include "Libraries/ImGui/imgui_impl_sdl.h"
 
 #include <GL/glew.h>
@@ -37,6 +36,14 @@ bool ModuleInput::Init()
 update_status ModuleInput::Update()
 {
     update_status status = UPDATE_CONTINUE;
+    
+    for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
+        if (keysState[i] == KeyState::DOWN)
+            keysState[i] = KeyState::REPEAT;
+
+        if (keysState[i] == KeyState::UP)
+            keysState[i] = KeyState::IDLE;
+    }
 
     SDL_PumpEvents();
 
@@ -45,54 +52,6 @@ update_status ModuleInput::Update()
     if (keyboard[SDL_SCANCODE_ESCAPE]) 
     {
         status = UPDATE_STOP;
-    }
-    if (keyboard[SDL_SCANCODE_LSHIFT])
-    {
-        App->engineCamera->Run();
-    }
-    else if (!keyboard[SDL_SCANCODE_LSHIFT])
-    {
-        App->engineCamera->Walk();
-    }
-    if (keyboard[SDL_SCANCODE_W])
-    {
-        App->engineCamera->Move(camera_movement::MOVE_FORWARD);
-    }
-    if (keyboard[SDL_SCANCODE_S])
-    {
-        App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
-    }
-    if (keyboard[SDL_SCANCODE_Q])
-    {
-        App->engineCamera->Move(camera_movement::MOVE_UP);
-    }
-    if (keyboard[SDL_SCANCODE_E])
-    {
-        App->engineCamera->Move(camera_movement::MOVE_DOWN);
-    }
-    if (keyboard[SDL_SCANCODE_A])
-    {
-        App->engineCamera->Move(camera_movement::MOVE_LEFT);
-    }
-    if (keyboard[SDL_SCANCODE_D])
-    {
-        App->engineCamera->Move(camera_movement::MOVE_RIGHT);
-    }
-    if (keyboard[SDL_SCANCODE_UP])
-    {
-        App->engineCamera->Rotate(camera_movement::ROTATE_DOWN);
-    }
-    if (keyboard[SDL_SCANCODE_DOWN])
-    {
-        App->engineCamera->Rotate(camera_movement::ROTATE_UP);
-    }
-    if (keyboard[SDL_SCANCODE_LEFT])
-    {
-        App->engineCamera->Rotate(camera_movement::ROTATE_LEFT);
-    }
-    if (keyboard[SDL_SCANCODE_RIGHT])
-    {
-        App->engineCamera->Rotate(camera_movement::ROTATE_RIGHT);
     }
 
     SDL_Event sdlEvent;
@@ -113,16 +72,24 @@ update_status ModuleInput::Update()
 
             break;
 
+        case SDL_KEYDOWN:
+            this->keysState[sdlEvent.key.keysym.scancode] = KeyState::DOWN;
+            break;
+
+        case SDL_KEYUP:
+            this->keysState[sdlEvent.key.keysym.scancode] = KeyState::UP;
+            break;
+
         case SDL_MOUSEWHEEL:
             if (sdlEvent.wheel.y > 0)
             {
                 App->engineCamera->Run();
-                App->engineCamera->Move(camera_movement::MOVE_FORWARD);
+                App->engineCamera->Move();
             }
             else if (sdlEvent.wheel.y < 0)
             {
                 App->engineCamera->Run();
-                App->engineCamera->Move(camera_movement::MOVE_BACKWARDS);
+                App->engineCamera->Move();
             }
 
             break;
@@ -135,13 +102,12 @@ update_status ModuleInput::Update()
 
     }
 
-    keyboard = SDL_GetKeyboardState(NULL);
-
-    if (keyboard[SDL_SCANCODE_ESCAPE]) {
-        status = UPDATE_STOP;
-    }
-
     return status;
+}
+
+KeyState ModuleInput::GetKey(int scanCode) const
+{
+    return keysState[scanCode];
 }
 
 // Called before quitting

@@ -69,7 +69,7 @@ update_status ModuleEditor::Update()
 
 	if (windowOpened)
 	{
-		if (ImGui::Begin("Camera Settings", &windowOpened, ImGuiWindowFlags_NoCollapse))
+		if (ImGui::Begin("Camera Settings", &windowOpened))
 		{
 			int hfov = App->engineCamera->GetHFOV();
 			int vfov = App->engineCamera->GetVFOV();
@@ -115,14 +115,14 @@ update_status ModuleEditor::Update()
 		}
 	}
 
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate()
 {
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 	SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
 	SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
 	ImGui::UpdatePlatformWindows();

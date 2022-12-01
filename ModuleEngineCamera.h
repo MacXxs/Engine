@@ -27,8 +27,10 @@ public:
 
 	bool Init() override;
 
-	void Move(camera_movement move);
-	void Rotate(camera_movement move);
+	update_status Update();
+
+	void Move();
+	void Rotate();
 	void MouseRotate(int xrel, int yrel);
 	void Run();
 	void Walk();

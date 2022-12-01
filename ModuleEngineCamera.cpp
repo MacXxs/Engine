@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "ModuleEngineCamera.h"
 #include "ModuleWindow.h"
+#include "ModuleInput.h"
 
 #include "Libraries/MathGeoLib/src/Math/float3x3.h"
 #include "Libraries/MathGeoLib/src/Math/Quat.h"
@@ -33,64 +34,85 @@ bool ModuleEngineCamera::Init()
 	return true;
 }
 
-void ModuleEngineCamera::Move(camera_movement move)
+update_status ModuleEngineCamera::Update()
 {
-	switch (move)
-	{
-	case camera_movement::MOVE_FORWARD:
-		position = position + frustum.Front().Normalized() * moveSpeed * acceleration * App->deltaTime;
-		break;
+	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) != KeyState::IDLE)
+		Run();
+	else
+		Walk();
 
-	case camera_movement::MOVE_BACKWARDS:
-		position = position + -(frustum.Front().Normalized()) * moveSpeed * acceleration * App->deltaTime;
-		break;
+	Move();
+	Rotate();
 
-	case camera_movement::MOVE_LEFT:
-		position = position + -(frustum.WorldRight()) * moveSpeed * acceleration * App->deltaTime;
-		break;
-
-	case camera_movement::MOVE_RIGHT:
-		position = position + frustum.WorldRight() * moveSpeed * acceleration * App->deltaTime;
-		break;
-
-	case camera_movement::MOVE_UP:
-		position = position + frustum.Up() * moveSpeed * acceleration * App->deltaTime;
-		break;
-
-	case camera_movement::MOVE_DOWN:
-		position = position + -(frustum.Up()) * moveSpeed * acceleration * App->deltaTime;
-		break;
-	}
-	
-	frustum.SetPos(position);
+	return UPDATE_CONTINUE;
 }
 
-void ModuleEngineCamera::Rotate(camera_movement move)
+void ModuleEngineCamera::Move()
+{
+	if (App->input->GetKey(SDL_SCANCODE_W) != KeyState::IDLE)
+	{
+		position = position + frustum.Front().Normalized() * 
+			moveSpeed * acceleration * App->deltaTime;
+		frustum.SetPos(position);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_S) != KeyState::IDLE)
+	{
+		position = position + -(frustum.Front().Normalized()) * 
+			moveSpeed * acceleration * App->deltaTime;
+		frustum.SetPos(position);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_A) != KeyState::IDLE)
+	{
+		position = position + -(frustum.WorldRight()) * moveSpeed * acceleration * App->deltaTime;
+		frustum.SetPos(position);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_D) != KeyState::IDLE)
+	{
+		position = position + frustum.WorldRight() * moveSpeed * acceleration * App->deltaTime;
+		frustum.SetPos(position);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_E) != KeyState::IDLE)
+	{
+		position = position + frustum.Up() * moveSpeed * acceleration * App->deltaTime;
+		frustum.SetPos(position);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_Q) != KeyState::IDLE)
+	{
+		position = position + -(frustum.Up()) * moveSpeed * acceleration * App->deltaTime;
+		frustum.SetPos(position);
+	}
+}
+
+void ModuleEngineCamera::Rotate()
 {
 	float yaw = 0.f, pitch = 0.f;
 
 	float rotationAngle = RadToDeg(frustum.Front().Normalized().AngleBetween(float3::unitY));
 
-	switch (move)
+	ENGINE_LOG("Rotation angle: %f", rotationAngle);
+
+	if (App->input->GetKey(SDL_SCANCODE_UP) != KeyState::IDLE)
 	{
-	case camera_movement::ROTATE_UP:
-		if (rotationAngle - rotationSpeed * acceleration > 0) pitch = 
-			math::DegToRad(DEFAULT_ROTATION_DEGREE);
-		break;
-
-	case camera_movement::ROTATE_DOWN:
-		if (rotationAngle + rotationSpeed * acceleration < 180) pitch =
-			math::DegToRad(-DEFAULT_ROTATION_DEGREE);
-		break;
-
-	case camera_movement::ROTATE_LEFT:
-		yaw = math::DegToRad(DEFAULT_ROTATION_DEGREE);
-		break;
-
-	case camera_movement::ROTATE_RIGHT:
-		yaw = math::DegToRad(-DEFAULT_ROTATION_DEGREE);
-		break;
+		if (rotationAngle + rotationSpeed * acceleration < 180) 
+			pitch = math::DegToRad(-DEFAULT_ROTATION_DEGREE);
 	}
+
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) != KeyState::IDLE)
+	{
+		if (rotationAngle - rotationSpeed * acceleration > 0) 
+			pitch = math::DegToRad(DEFAULT_ROTATION_DEGREE);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) != KeyState::IDLE)
+		yaw = math::DegToRad(DEFAULT_ROTATION_DEGREE);
+
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) != KeyState::IDLE)
+		yaw = math::DegToRad(-DEFAULT_ROTATION_DEGREE);
 
 	Quat pitchQuat(frustum.WorldRight(), pitch * App->deltaTime * rotationSpeed * acceleration);
 	Quat yawQuat(float3::unitY, yaw * App->deltaTime * rotationSpeed * acceleration);

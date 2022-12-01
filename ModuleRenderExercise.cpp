@@ -83,11 +83,11 @@ update_status ModuleRenderExercise::Update()
 	{
 		it->Draw();
 	}
-	
+
 	int w, h;
 	SDL_GetWindowSize(App->window->window, &w, &h);
 
-	App->debug->Draw(App->engineCamera->GetViewMatrix(), 
+	App->debug->Draw(App->engineCamera->GetViewMatrix(),
 		App->engineCamera->GetProjectionMatrix(), w, h);
 
 	return status;
