@@ -11,14 +11,6 @@
 #define DEFAULT_ROTATION_SPEED 5.f
 #define DEFAULT_SHIFT_ACCELERATION 2.f
 
-enum class camera_movement { 
-	MOVE_FORWARD,	MOVE_BACKWARDS, 
-	MOVE_LEFT,		MOVE_RIGHT,
-	MOVE_UP,		MOVE_DOWN,
-	ROTATE_UP,		ROTATE_DOWN,
-	ROTATE_LEFT,	ROTATE_RIGHT
-};
-
 class ModuleEngineCamera : public Module
 {
 public:
