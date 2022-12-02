@@ -94,8 +94,6 @@ void ModuleEngineCamera::Rotate()
 
 	float rotationAngle = RadToDeg(frustum.Front().Normalized().AngleBetween(float3::unitY));
 
-	ENGINE_LOG("Rotation angle: %f", rotationAngle);
-
 	if (App->input->GetKey(SDL_SCANCODE_UP) != KeyState::IDLE)
 	{
 		if (rotationAngle + rotationSpeed * acceleration < 180) 

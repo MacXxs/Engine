@@ -113,6 +113,10 @@ update_status ModuleEditor::Update()
 
 			ImGui::End();
 		}
+		else
+		{
+			ImGui::End();
+		}
 	}
 
 	ImGui::Render();
