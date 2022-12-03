@@ -9,7 +9,15 @@
 #define DEFAULT_MOVE_SPEED 5.f
 #define DEFAULT_ROTATION_DEGREE 25
 #define DEFAULT_ROTATION_SPEED 5.f
+#define DEFAULT_MOUSE_SPEED_MODIFIER 10.f
 #define DEFAULT_SHIFT_ACCELERATION 2.f
+
+#define MAX_MOUSE_SPEED_MODIFIER 50.f
+#define MAX_HFOV 120
+#define MAX_VFOV 85
+
+#define MIN_HFOV 60
+#define MIN_VFOV 34
 
 class ModuleEngineCamera : public Module
 {
@@ -23,9 +31,10 @@ public:
 
 	void Move();
 	void Rotate();
-	void MouseRotate(int xrel, int yrel);
+	void FreeLook();
 	void Run();
 	void Walk();
+	void Zoom();
 
 	void SetHFOV(float fov);
 	void SetVFOV(float fov);
@@ -54,5 +63,6 @@ private:
 	float acceleration;
 	float moveSpeed;
 	float rotationSpeed;
+	float mouseSpeedModifier;
 };
 

@@ -8,7 +8,8 @@
 #include "Libraries/ImGui/imgui_impl_sdl.h"
 #include "Libraries/ImGui/imgui_impl_opengl3.h"
 
-static bool windowOpened = false;
+static bool cameraOpened = false;
+static bool meshOpened = false;
 
 ModuleEditor::ModuleEditor() {}
 
@@ -22,7 +23,7 @@ bool ModuleEditor::Init()
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;        // Enable Gamepad Controls
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 
 	return true;
 }
@@ -59,7 +60,14 @@ update_status ModuleEditor::Update()
 	{
 		if (ImGui::BeginMenu("Settings"))
 		{
-			if (ImGui::MenuItem("Camera")) windowOpened = true;
+			if (ImGui::MenuItem("Camera")) cameraOpened = true;
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("View"))
+		{
+			if (ImGui::MenuItem("Mesh")) meshOpened = true;
 
 			ImGui::EndMenu();
 		}
@@ -67,20 +75,20 @@ update_status ModuleEditor::Update()
 		ImGui::EndMainMenuBar();
 	}
 
-	if (windowOpened)
+	if (cameraOpened)
 	{
-		if (ImGui::Begin("Camera Settings", &windowOpened))
+		if (ImGui::Begin("Camera Settings", &cameraOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			int hfov = App->engineCamera->GetHFOV();
 			int vfov = App->engineCamera->GetVFOV();
 			float znear = App->engineCamera->GetZNear();
 			float zfar = App->engineCamera->GetZFar();
 
-			if (ImGui::CollapsingHeader("Frustum"))
+			if (ImGui::CollapsingHeader("Frustum", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				if (ImGui::SliderInt("Horizontal FOV", &hfov, 60, 120))
+				if (ImGui::SliderInt("Horizontal FOV", &hfov, MIN_HFOV, MAX_HFOV))
 					App->engineCamera->SetHFOV(math::DegToRad(hfov));
-				if (ImGui::SliderInt("Vertical FOV", &vfov, 46, 104))
+				if (ImGui::SliderInt("Vertical FOV", &vfov, MIN_VFOV, MAX_VFOV))
 					App->engineCamera->SetVFOV(math::DegToRad(vfov));
 
 				if (ImGui::InputFloat("Z near", &znear, 0.5f, 0.0f))
@@ -92,19 +100,19 @@ update_status ModuleEditor::Update()
 			float movementSpeed = App->engineCamera->GetMoveSpeed();
 			float rotationSpeed = App->engineCamera->GetRotationSpeed();
 
-			if (ImGui::CollapsingHeader("Movement"))
+			if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				if (ImGui::SliderFloat("Movement Speed", &movementSpeed, 
 										DEFAULT_MOVE_SPEED, DEFAULT_MOVE_SPEED * 10.f))
 					App->engineCamera->SetMoveSpeed(movementSpeed);
-				if (ImGui::SliderFloat("Rotation Speed", &rotationSpeed, 
+				if (ImGui::SliderFloat("Rotation Speed (keyboard)", &rotationSpeed, 
 										DEFAULT_ROTATION_SPEED, DEFAULT_ROTATION_SPEED * 10.f))
 					App->engineCamera->SetRotationSpeed(rotationSpeed);
 			}
 
 			static float4 color = App->renderer->GetBackgroundColor();
 
-			if (ImGui::CollapsingHeader("Scene"))
+			if (ImGui::CollapsingHeader("Scene", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				ImGui::Text("Background Color");
 				if (ImGui::ColorEdit3("MyColor##1", (float*)&color))
@@ -119,14 +127,26 @@ update_status ModuleEditor::Update()
 		}
 	}
 
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	if (meshOpened)
+	{
+		if (ImGui::Begin("Mesh Information", &meshOpened))
+		{
+			ImGui::End();
+		}
+		else
+		{
+			ImGui::End();
+		}
+	}
 
 	return UPDATE_CONTINUE;
 }
 
 update_status ModuleEditor::PostUpdate()
 {
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
 	SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
 	ImGui::UpdatePlatformWindows();

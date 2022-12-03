@@ -24,6 +24,7 @@ bool ModuleEngineCamera::Init()
 	acceleration = DEFAULT_SHIFT_ACCELERATION;
 	moveSpeed = DEFAULT_MOVE_SPEED;
 	rotationSpeed = DEFAULT_ROTATION_SPEED;
+	mouseSpeedModifier = DEFAULT_MOUSE_SPEED_MODIFIER;
 
 	position = float3(0.f, 2.f, 5.f);
 
@@ -36,12 +37,24 @@ bool ModuleEngineCamera::Init()
 
 update_status ModuleEngineCamera::Update()
 {
+
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) != KeyState::IDLE)
 		Run();
 	else
 		Walk();
 
-	Move();
+	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) != KeyState::IDLE)
+	{
+		Move();
+		FreeLook();
+	}
+
+	if (App->input->IsMouseWeelScrolled())
+	{
+		ENGINE_LOG("Entra");
+		Zoom();
+	}
+
 	Rotate();
 
 	return UPDATE_CONTINUE;
@@ -111,6 +124,8 @@ void ModuleEngineCamera::Rotate()
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) != KeyState::IDLE)
 		yaw = math::DegToRad(-DEFAULT_ROTATION_DEGREE);
+	else
+		mouseSpeedModifier = 0.f;
 
 	Quat pitchQuat(frustum.WorldRight(), pitch * App->deltaTime * rotationSpeed * acceleration);
 	Quat yawQuat(float3::unitY, yaw * App->deltaTime * rotationSpeed * acceleration);
@@ -126,19 +141,26 @@ void ModuleEngineCamera::Rotate()
 	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
 }
 
-void ModuleEngineCamera::MouseRotate(int xrel, int yrel)
+void ModuleEngineCamera::FreeLook()
 {
 	float yaw = 0.f, pitch = 0.f;
-
+	float xrel = App->input->GetMouseMotionX();
+	float yrel = App->input->GetMouseMotionY();
 	float rotationAngle = RadToDeg(frustum.Front().Normalized().AngleBetween(float3::unitY));
+
+	if (App->input->GetMouseButton(SDL_BUTTON_RIGHT) == KeyState::REPEAT && 
+		mouseSpeedModifier < MAX_MOUSE_SPEED_MODIFIER)
+	{
+		mouseSpeedModifier += 5.f;
+	}
 
 	if (yrel > 0) { if (rotationAngle - yrel > 0) pitch = math::DegToRad(yrel); }
 	else if (yrel < 0) { if (rotationAngle - yrel < 180) pitch = math::DegToRad(yrel); }
 	
 	yaw = math::DegToRad(-xrel);
 
-	Quat pitchQuat(frustum.WorldRight(), pitch * App->deltaTime);
-	Quat yawQuat(float3::unitY, yaw * App->deltaTime);
+	Quat pitchQuat(frustum.WorldRight(), pitch * mouseSpeedModifier * App->deltaTime);
+	Quat yawQuat(float3::unitY, yaw * mouseSpeedModifier * App->deltaTime);
 
 	float3x3 rotationMatrixX = float3x3::FromQuat(pitchQuat);
 	float3x3 rotationMatrixY = float3x3::FromQuat(yawQuat);
@@ -159,6 +181,14 @@ void ModuleEngineCamera::Run()
 void ModuleEngineCamera::Walk()
 {
 	acceleration = 1.f;
+}
+
+void ModuleEngineCamera::Zoom()
+{
+	float newHFOV = GetHFOV() - App->input->GetMouseWheelY();
+
+	if (newHFOV <= MAX_HFOV && newHFOV >= MIN_HFOV)
+		SetHFOV(math::DegToRad(newHFOV));
 }
 
 void ModuleEngineCamera::SetHFOV(float fov)

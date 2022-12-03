@@ -36,13 +36,25 @@ bool ModuleInput::Init()
 update_status ModuleInput::Update()
 {
     update_status status = UPDATE_CONTINUE;
+
+    this->mouseMotion.first = 0.f;
+    this->mouseMotion.second = 0.f;
+    this->mouseWheelScrolled = false;
     
     for (int i = 0; i < SDL_NUM_SCANCODES; ++i) {
-        if (keysState[i] == KeyState::DOWN)
-            keysState[i] = KeyState::REPEAT;
+        if (this->keysState[i] == KeyState::DOWN)
+            this->keysState[i] = KeyState::REPEAT;
 
-        if (keysState[i] == KeyState::UP)
-            keysState[i] = KeyState::IDLE;
+        if (this->keysState[i] == KeyState::UP)
+            this->keysState[i] = KeyState::IDLE;
+    }
+
+    for (int i = 0; i < NUM_MOUSEBUTTONS; ++i) {
+        if (this->mouseButtonState[i] == KeyState::DOWN)
+            this->mouseButtonState[i] = KeyState::REPEAT;
+
+        if (this->mouseButtonState[i] == KeyState::UP)
+            this->mouseButtonState[i] = KeyState::IDLE;
     }
 
     SDL_PumpEvents();
@@ -64,7 +76,7 @@ update_status ModuleInput::Update()
         {
         case SDL_QUIT:
             return UPDATE_STOP;
-
+        
         case SDL_WINDOWEVENT:
             if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED ||
                 sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
@@ -75,31 +87,27 @@ update_status ModuleInput::Update()
         case SDL_KEYDOWN:
             this->keysState[sdlEvent.key.keysym.scancode] = KeyState::DOWN;
             break;
-
         case SDL_KEYUP:
             this->keysState[sdlEvent.key.keysym.scancode] = KeyState::UP;
             break;
 
-        case SDL_MOUSEWHEEL:
-            if (sdlEvent.wheel.y > 0)
-            {
-                App->engineCamera->Run();
-                App->engineCamera->Move();
-            }
-            else if (sdlEvent.wheel.y < 0)
-            {
-                App->engineCamera->Run();
-                App->engineCamera->Move();
-            }
+        case SDL_MOUSEBUTTONDOWN:
+            this->mouseButtonState[sdlEvent.button.button] = KeyState::DOWN;
+            break;
+        case SDL_MOUSEBUTTONUP:
+            this->mouseButtonState[sdlEvent.button.button] = KeyState::UP;
+            break;
 
+        case SDL_MOUSEMOTION:
+            this->mouseMotion = std::make_pair(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
+            break;
+
+        case SDL_MOUSEWHEEL:
+            this->mouseWheel.first = sdlEvent.wheel.x;
+            this->mouseWheel.second = sdlEvent.wheel.y;
+            this->mouseWheelScrolled = true;
             break;
         }
-
-        if (sdlEvent.type == SDL_MOUSEMOTION && sdlEvent.motion.state & SDL_BUTTON_RMASK)
-        {
-            App->engineCamera->MouseRotate(sdlEvent.motion.xrel, sdlEvent.motion.yrel);
-        }
-
     }
 
     return status;
@@ -107,7 +115,37 @@ update_status ModuleInput::Update()
 
 KeyState ModuleInput::GetKey(int scanCode) const
 {
-    return keysState[scanCode];
+    return this->keysState[scanCode];
+}
+
+KeyState ModuleInput::GetMouseButton(int mouseButton) const
+{
+    return this->mouseButtonState[mouseButton];
+}
+
+float ModuleInput::GetMouseMotionX() const
+{
+    return this->mouseMotion.first;
+}
+
+float ModuleInput::GetMouseMotionY() const
+{
+    return this->mouseMotion.second;
+}
+
+float ModuleInput::GetMouseWheelX() const
+{
+    return this->mouseWheel.first;
+}
+
+float ModuleInput::GetMouseWheelY() const
+{
+    return this->mouseWheel.second;
+}
+
+bool ModuleInput::IsMouseWeelScrolled() const
+{
+    return this->mouseWheelScrolled;
 }
 
 // Called before quitting
