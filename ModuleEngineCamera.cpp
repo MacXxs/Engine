@@ -6,6 +6,7 @@
 
 #include "Libraries/MathGeoLib/src/Math/float3x3.h"
 #include "Libraries/MathGeoLib/src/Math/Quat.h"
+#include "Libraries/MathGeoLib/src/Math/MathAll.h"
 #include "GL/glew.h"
 
 ModuleEngineCamera::ModuleEngineCamera() {};
@@ -59,6 +60,12 @@ update_status ModuleEngineCamera::Update()
 	if (App->input->GetKey(SDL_SCANCODE_F) != KeyState::IDLE)
 		Focus(App->renderer->GetModel(0)->GetAABB());
 
+	if (App->input->GetKey(SDL_SCANCODE_LALT) != KeyState::IDLE && 
+		App->input->GetMouseButton(SDL_BUTTON_LEFT) != KeyState::IDLE)
+	{
+		Orbit(App->renderer->GetModel(0)->GetAABB());
+	}
+	
 	Rotate();
 
 	return UPDATE_CONTINUE;
@@ -145,6 +152,13 @@ void ModuleEngineCamera::Rotate()
 	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
 }
 
+void ModuleEngineCamera::Rotate(const float3x3& rotationMatrix) {
+	vec oldFront = frustum.Front().Normalized();
+	vec oldUp = frustum.Up().Normalized();
+	frustum.SetFront(rotationMatrix * oldFront);
+	frustum.SetUp(rotationMatrix * oldUp);
+}
+
 void ModuleEngineCamera::FreeLook()
 {
 	float yaw = 0.f, pitch = 0.f;
@@ -199,10 +213,34 @@ void ModuleEngineCamera::Focus(const AABB &aabb)
 {
 	float3 point = aabb.CenterPoint();
 
-	SetLookAt(point);
+	float xDistance = aabb.MaxX() - aabb.MinX();
+	float yDistance = aabb.MaxY() - aabb.MinY();
+	float zDistance = aabb.MaxZ() - aabb.MinZ();
+	float maxDistance = Max(Max(xDistance, yDistance), zDistance);
 
-	//TODO: Set a distance to the focused object depending on its size
-	ENGINE_LOG("Distance: %f", GetDistance(point));
+	SetLookAt(point);
+	position = float3(point.x, point.y, point.z + maxDistance*2.f);
+
+	frustum.SetPos(position);
+}
+
+void ModuleEngineCamera::Orbit(const AABB& aabb)
+{
+	float xDistance = aabb.MaxX() - aabb.MinX();
+	float yDistance = aabb.MaxY() - aabb.MinY();
+	float zDistance = aabb.MaxZ() - aabb.MinZ();
+	float maxDistance = Max(Max(xDistance, yDistance), zDistance);
+
+	vec oldFocus = frustum.Pos() + frustum.Front().Normalized() * maxDistance * 2.f;
+
+	Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), 
+		DegToRad(-App->input->GetMouseMotionY() * rotationSpeed)));
+	Rotate(float3x3::RotateY(DegToRad(-App->input->GetMouseMotionX() * rotationSpeed)));
+
+	vec newFocus = frustum.Pos() + frustum.Front().Normalized() * maxDistance * 2.f;
+
+	position = position + (oldFocus - newFocus);
+	frustum.SetPos(position);
 }
 
 void ModuleEngineCamera::SetHFOV(float fov)

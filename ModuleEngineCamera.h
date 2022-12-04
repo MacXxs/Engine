@@ -8,7 +8,7 @@
 
 #define DEFAULT_MOVE_SPEED 5.f
 #define DEFAULT_ROTATION_DEGREE 25
-#define DEFAULT_ROTATION_SPEED 5.f
+#define DEFAULT_ROTATION_SPEED 2.5f
 #define DEFAULT_MOUSE_SPEED_MODIFIER 10.f
 #define DEFAULT_SHIFT_ACCELERATION 2.f
 
@@ -31,11 +31,13 @@ public:
 
 	void Move();
 	void Rotate();
+	void Rotate(const float3x3& rotationMatrix);
 	void FreeLook();
 	void Run();
 	void Walk();
 	void Zoom();
 	void Focus(const AABB &aabb);
+	void Orbit(const AABB& aabb);
 
 	void SetHFOV(float fov);
 	void SetVFOV(float fov);
