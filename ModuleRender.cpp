@@ -3,8 +3,18 @@
 #include "ModuleRender.h"
 #include "ModuleWindow.h"
 #include "ModuleEngineCamera.h"
-#include "GL/glew.h"
-#include "SDL.h"
+#include "ModuleProgram.h"
+
+#include "Model.h"
+
+#include <iostream>
+
+#include <MathGeoLib/src/Geometry/AABB.h>
+#include <MathGeoLib/src/Geometry/Frustum.h>
+#include <MathGeoLib/src/Math/float3x3.h>
+#include <MathGeoLib/src/Math/float3.h>
+#include <GL/glew.h>
+#include <SDL.h>
 
 void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -51,7 +61,7 @@ ModuleRender::~ModuleRender()
 // Called before render is available
 bool ModuleRender::Init()
 {
-	ENGINE_LOG("Creating Renderer context");
+	ENGINE_LOG("--------- Render Init ----------");
 
 	/*App->window->window = SDL_CreateWindow(
 		"SDL2/OpenGL Demo", 0, 0, SCREEN_WIDTH, SCREEN_WIDTH,
@@ -92,6 +102,26 @@ bool ModuleRender::Init()
 	return true;
 }
 
+bool ModuleRender::Start()
+{
+	ENGINE_LOG("--------- Render Start ----------");
+
+	char* vertexSource = App->program->LoadShaderSource("Shaders/default_vertex.glsl");
+	char* fragmentSource = App->program->LoadShaderSource("Shaders/default_fragment.glsl");
+
+	unsigned vertexShader = App->program->CompileShader(GL_VERTEX_SHADER, vertexSource);
+	unsigned fragmentShader = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+
+	App->program->CreateProgram(vertexShader, fragmentShader);
+
+	Model* bakerHouse = new Model;
+	bakerHouse->Load("Assets/models/BakerHouse.fbx");
+
+	models.push_back(bakerHouse);
+
+	return true;
+}
+
 update_status ModuleRender::PreUpdate()
 {
 	int width, height;
@@ -111,6 +141,17 @@ update_status ModuleRender::PreUpdate()
 // Called every draw update
 update_status ModuleRender::Update()
 {
+	for (Model* model : models)
+	{
+		model->Draw();
+	}
+
+	int w, h;
+	SDL_GetWindowSize(App->window->window, &w, &h);
+
+	App->debug->Draw(App->engineCamera->GetViewMatrix(),
+		App->engineCamera->GetProjectionMatrix(), w, h);
+
 	return UPDATE_CONTINUE;
 }
 
@@ -127,6 +168,10 @@ bool ModuleRender::CleanUp()
 	ENGINE_LOG("Destroying renderer");
 
 	SDL_GL_DeleteContext(this->context);
+
+	glDeleteBuffers(1, &this->vbo);
+
+	models.clear();
 
 	//Destroy window
 
@@ -146,5 +191,10 @@ void ModuleRender::SetBackgroundColor(float4 color)
 float4 ModuleRender::GetBackgroundColor() const
 {
 	return backgroundColor;
+}
+
+Model* ModuleRender::GetModel(unsigned pos) const
+{
+	return models[pos];
 }
 

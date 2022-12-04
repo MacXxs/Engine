@@ -2,9 +2,11 @@
 #include "ModuleEngineCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
+#include "ModuleRender.h"
 
 #include "Libraries/MathGeoLib/src/Math/float3x3.h"
 #include "Libraries/MathGeoLib/src/Math/Quat.h"
+#include "GL/glew.h"
 
 ModuleEngineCamera::ModuleEngineCamera() {};
 
@@ -51,9 +53,11 @@ update_status ModuleEngineCamera::Update()
 
 	if (App->input->IsMouseWeelScrolled())
 	{
-		ENGINE_LOG("Entra");
 		Zoom();
 	}
+
+	if (App->input->GetKey(SDL_SCANCODE_F) != KeyState::IDLE)
+		Focus(App->renderer->GetModel(0)->GetAABB());
 
 	Rotate();
 
@@ -191,6 +195,16 @@ void ModuleEngineCamera::Zoom()
 		SetHFOV(math::DegToRad(newHFOV));
 }
 
+void ModuleEngineCamera::Focus(const AABB &aabb)
+{
+	float3 point = aabb.CenterPoint();
+
+	SetLookAt(point);
+
+	//TODO: Set a distance to the focused object depending on its size
+	ENGINE_LOG("Distance: %f", GetDistance(point));
+}
+
 void ModuleEngineCamera::SetHFOV(float fov)
 {
 	frustum.SetHorizontalFovAndAspectRatio(fov, aspectRatio);
@@ -220,6 +234,21 @@ void ModuleEngineCamera::SetPosition(float3 position)
 void ModuleEngineCamera::SetOrientation(float3 orientation)
 {
 	frustum.SetUp(orientation);
+}
+
+void ModuleEngineCamera::SetLookAt(float3 lookAt)
+{
+	float3 direction = lookAt - frustum.Pos();
+
+	vec oldUp = frustum.Up().Normalized();
+	vec oldFront = frustum.Front().Normalized();
+
+	float3x3 rotationMatrix = float3x3::LookAt(
+		frustum.Front().Normalized(), direction.Normalized(), frustum.Up(), float3::unitY
+	);
+	
+	frustum.SetUp(rotationMatrix * oldUp);
+	frustum.SetFront(rotationMatrix * oldFront);
 }
 
 void ModuleEngineCamera::SetMoveSpeed(float speed)
@@ -271,4 +300,9 @@ float ModuleEngineCamera::GetMoveSpeed() const
 float ModuleEngineCamera::GetRotationSpeed() const
 {
 	return rotationSpeed;
+}
+
+float ModuleEngineCamera::GetDistance(float3 point) const
+{
+	return frustum.Pos().Distance(point);
 }

@@ -13,6 +13,13 @@ Mesh::Mesh(const aiMesh* mesh)
 	CreateVAO();
 
 	this->materialIndex = mesh->mMaterialIndex;
+	
+	this->vertices = new vec[mesh->mNumVertices];
+
+	for (int i = 0; i < mesh->mNumVertices; ++i)
+	{
+		this->vertices[i] = float3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+	}
 }
 
 void Mesh::LoadVBO(const aiMesh* mesh)
@@ -96,4 +103,14 @@ void Mesh::Draw(const std::vector<unsigned>& model_textures)
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glDrawElements(GL_TRIANGLES, this->numIndexes, GL_UNSIGNED_INT, nullptr);
+}
+
+vec* Mesh::GetVertices() const
+{
+	return this->vertices;
+}
+
+unsigned Mesh::GetNumVertices() const
+{
+	return this->numVertices;
 }

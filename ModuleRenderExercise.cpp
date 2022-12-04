@@ -75,8 +75,6 @@ update_status ModuleRenderExercise::PreUpdate()
 
 update_status ModuleRenderExercise::Update()
 {
-	update_status status = UPDATE_CONTINUE;
-
 	//renderTriangle();
 	
 	for (auto it = models.begin(); it != models.end(); ++it)
@@ -90,7 +88,7 @@ update_status ModuleRenderExercise::Update()
 	App->debug->Draw(App->engineCamera->GetViewMatrix(),
 		App->engineCamera->GetProjectionMatrix(), w, h);
 
-	return status;
+	return UPDATE_CONTINUE;
 }
 
 update_status ModuleRenderExercise::PostUpdate()

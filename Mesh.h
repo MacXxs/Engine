@@ -3,6 +3,7 @@
 #include <vector>
 
 #include <assimp/mesh.h>
+#include <MathGeoLib/src/Math/float3.h>
 
 class Mesh
 {
@@ -14,6 +15,9 @@ public:
 	void LoadEBO(const aiMesh* mesh);
 	void CreateVAO();
 	void Draw(const std::vector<unsigned>& model_textures);
+
+	vec* GetVertices() const;
+	unsigned GetNumVertices() const;
 	
 private:
 	unsigned vbo;
@@ -23,5 +27,7 @@ private:
 	unsigned materialIndex;
 	unsigned numVertices;
 	unsigned numIndexes;
+
+	vec* vertices;
 };
 

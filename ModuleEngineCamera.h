@@ -35,6 +35,7 @@ public:
 	void Run();
 	void Walk();
 	void Zoom();
+	void Focus(const AABB &aabb);
 
 	void SetHFOV(float fov);
 	void SetVFOV(float fov);
@@ -54,6 +55,7 @@ public:
 	float GetZFar() const;
 	float GetMoveSpeed() const;
 	float GetRotationSpeed() const;
+	float GetDistance(float3 point) const;
 
 private:
 

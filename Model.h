@@ -5,6 +5,8 @@
 #include <vector>
 
 #include <assimp/material.h>
+#include <MathGeoLib/src/Geometry/AABB.h>
+
 
 class aiScene;
 
@@ -19,8 +21,12 @@ public:
 	void LoadMeshes(const aiScene* scene);
 	void Draw();
 
+	AABB GetAABB() const;
+
 private:
 	std::vector<unsigned> textures;
-	std::vector<Mesh> meshes;
+	std::vector<Mesh*> meshes;
+	
+	AABB aabb;
 };
 

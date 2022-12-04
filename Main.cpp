@@ -60,7 +60,7 @@ int main(int argc, char ** argv)
 			ENGINE_LOG("Application Start --------------");
 			if (App->Start() == false)
 			{
-				ENGINE_LOG("Application Init exits with error -----");
+				ENGINE_LOG("Application Start exits with error -----");
 				state = MAIN_EXIT;
 			}
 			else

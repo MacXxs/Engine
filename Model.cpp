@@ -14,10 +14,12 @@
 
 Model::Model()
 {
+	aabb.SetNegativeInfinity();
 }
 
 Model::~Model()
 {
+	meshes.clear();
 }
 
 void Model::Load(const char* fileName)
@@ -59,7 +61,9 @@ void Model::LoadMeshes(const aiScene* scene)
 	{
 		Mesh* mesh = new Mesh(scene->mMeshes[i]);
 
-		meshes.push_back(*mesh);
+		aabb.Enclose(mesh->GetVertices(), mesh->GetNumVertices());
+
+		meshes.push_back(mesh);
 	}
 }
 
@@ -67,6 +71,11 @@ void Model::Draw()
 {
 	for (int i = 0; i < meshes.size(); ++i)
 	{
-		meshes[i].Draw(textures);
+		meshes[i]->Draw(textures);
 	}
+}
+
+AABB Model::GetAABB() const
+{
+	return aabb;
 }

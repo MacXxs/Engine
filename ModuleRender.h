@@ -1,8 +1,11 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "Model.h"
 
-#include "Libraries/MathGeoLib/src/Math/float4.h"
+#include <MathGeoLib/src/Math/float4.h>
+
+#include <list>
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -15,6 +18,7 @@ public:
 	~ModuleRender();
 
 	bool Init();
+	bool Start();
 	bool CleanUp();
 
 	update_status PreUpdate();
@@ -26,10 +30,14 @@ public:
 	void SetBackgroundColor(float4 color);
 
 	float4 GetBackgroundColor() const;
+	Model* GetModel(unsigned pos) const;
 
 private:
-	void * context;
+	void* context;
 	float4 backgroundColor;
+
+	unsigned vbo;
+	std::vector<Model*> models;
 
 	friend class ModuleEditor;
 };
