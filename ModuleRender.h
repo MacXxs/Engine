@@ -31,6 +31,11 @@ public:
 
 	float4 GetBackgroundColor() const;
 	Model* GetModel(unsigned pos) const;
+	
+	bool LoadModel(const char* path);
+	bool AnyModelLoaded();
+	bool IsSupportedPath(const std::string& modelPath);
+
 
 private:
 	void* context;
@@ -40,4 +45,6 @@ private:
 	std::vector<Model*> models;
 
 	friend class ModuleEditor;
+
+	const std::vector<std::string> modelTypes = { "FBX" };
 };

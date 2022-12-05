@@ -61,8 +61,9 @@ bool ModuleWindow::Init()
 		}
 		else
 		{
+			SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
 			//Get window surface
-			
 			screen_surface = SDL_GetWindowSurface(window);
 		}
 	}

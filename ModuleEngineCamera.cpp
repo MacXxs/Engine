@@ -38,6 +38,14 @@ bool ModuleEngineCamera::Init()
 	return true;
 }
 
+bool ModuleEngineCamera::Start()
+{
+	if (App->renderer->AnyModelLoaded())
+		Focus(App->renderer->GetModel(0)->GetAABB());
+
+	return true;
+}
+
 update_status ModuleEngineCamera::Update()
 {
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) != KeyState::IDLE)
@@ -56,10 +64,11 @@ update_status ModuleEngineCamera::Update()
 		Zoom();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_F) != KeyState::IDLE)
+	if (App->renderer->AnyModelLoaded() && App->input->GetKey(SDL_SCANCODE_F) != KeyState::IDLE)
 		Focus(App->renderer->GetModel(0)->GetAABB());
 
-	if (App->input->GetKey(SDL_SCANCODE_LALT) != KeyState::IDLE && 
+	if (App->renderer->AnyModelLoaded() &&
+		App->input->GetKey(SDL_SCANCODE_LALT) != KeyState::IDLE &&
 		App->input->GetMouseButton(SDL_BUTTON_LEFT) != KeyState::IDLE)
 	{
 		const AABB& aabb = App->renderer->GetModel(0)->GetAABB();
@@ -212,8 +221,8 @@ void ModuleEngineCamera::Focus(const AABB &aabb)
 	float zDistance = aabb.MaxZ() - aabb.MinZ();
 	float maxDistance = Max(Max(xDistance, yDistance), zDistance);
 
-	SetLookAt(point);
 	position = float3(point.x, point.y, point.z + maxDistance*2.f);
+	SetLookAt(point);
 
 	frustum.SetPos(position);
 }

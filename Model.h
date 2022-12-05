@@ -3,10 +3,10 @@
 #include "Mesh.h"
 
 #include <vector>
+#include <string>
 
 #include <assimp/material.h>
 #include <MathGeoLib/src/Geometry/AABB.h>
-
 
 class aiScene;
 

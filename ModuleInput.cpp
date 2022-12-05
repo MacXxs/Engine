@@ -4,6 +4,7 @@
 #include "ModuleRender.h"
 #include "ModuleProgram.h"
 #include "ModuleEngineCamera.h"
+#include "ModuleWindow.h"
 
 #include "Libraries/ImGui/imgui_impl_sdl.h"
 
@@ -106,6 +107,15 @@ update_status ModuleInput::Update()
             this->mouseWheel.first = sdlEvent.wheel.x;
             this->mouseWheel.second = sdlEvent.wheel.y;
             this->mouseWheelScrolled = true;
+            break;
+
+        case SDL_DROPFILE:
+            char* droppedFilePath = sdlEvent.drop.file;
+
+            if (App->renderer->IsSupportedPath(droppedFilePath))
+                App->renderer->LoadModel(droppedFilePath);
+
+            SDL_free(droppedFilePath);    // Free dropped_filedir memory
             break;
         }
     }

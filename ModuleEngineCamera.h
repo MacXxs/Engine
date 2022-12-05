@@ -28,6 +28,7 @@ public:
 	~ModuleEngineCamera();
 
 	bool Init() override;
+	bool Start() override;
 
 	update_status Update();
 

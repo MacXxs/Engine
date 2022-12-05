@@ -13,8 +13,11 @@
 #include <MathGeoLib/src/Geometry/Frustum.h>
 #include <MathGeoLib/src/Math/float3x3.h>
 #include <MathGeoLib/src/Math/float3.h>
+
 #include <GL/glew.h>
 #include <SDL.h>
+
+
 
 void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -44,7 +47,7 @@ void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLe
 	case GL_DEBUG_SEVERITY_LOW: tmp_severity = "low"; break;
 	case GL_DEBUG_SEVERITY_NOTIFICATION: tmp_severity = "notification"; break;
 	};
-	ENGINE_LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
+	//ENGINE_LOG("<Source:%s> <Type:%s> <Severity:%s> <ID:%d> <Message:%s>\n", tmp_source, tmp_type, tmp_severity, id, message);
 }
 
 
@@ -114,10 +117,10 @@ bool ModuleRender::Start()
 
 	App->program->CreateProgram(vertexShader, fragmentShader);
 
-	Model* bakerHouse = new Model;
+	/*Model* bakerHouse = new Model;
 	bakerHouse->Load("Assets/models/BakerHouse.fbx");
 
-	models.push_back(bakerHouse);
+	models.push_back(bakerHouse);*/
 
 	return true;
 }
@@ -198,3 +201,39 @@ Model* ModuleRender::GetModel(unsigned pos) const
 	return models[pos];
 }
 
+bool ModuleRender::LoadModel(const char* path)
+{
+	ENGINE_LOG("---- Loading Model ----");
+
+	Model* newModel = new Model;
+	newModel->Load(path);
+
+	if (AnyModelLoaded())
+	{
+		models.clear();
+	}
+
+	models.push_back(newModel);
+
+	return false;
+}
+
+bool ModuleRender::AnyModelLoaded()
+{
+	return !models.empty();
+}
+
+bool ModuleRender::IsSupportedPath(const std::string& modelPath)
+{
+	bool valid = false;
+
+	std::string format = modelPath.substr(modelPath.size() - 3);
+	std::transform(format.begin(), format.end(), format.begin(), ::toupper);
+
+	if (std::find(this->modelTypes.begin(), this->modelTypes.end(), format) != this->modelTypes.end())
+	{
+		valid = true;
+	}
+
+	return valid;
+}

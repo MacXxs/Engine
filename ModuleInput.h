@@ -31,7 +31,7 @@ public:
 	float GetMouseMotionX() const;
 	float GetMouseMotionY() const;
 	float GetMouseWheelX() const;
-	float GetMouseWheelY() const;
+	float GetMouseWheelY() const; 
 
 	bool IsMouseWeelScrolled() const;
 

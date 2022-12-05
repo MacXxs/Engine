@@ -4,6 +4,7 @@
 #include "Application.h"
 
 #include "ModuleTexture.h"
+#include "ModuleEngineCamera.h"
 
 #include "Mesh.h"
 
@@ -31,6 +32,8 @@ void Model::Load(const char* fileName)
 		// TODO: LoadMeshes(scene->mMeshes, scene->mNumMeshes);
 		LoadMaterials(scene);
 		LoadMeshes(scene);
+
+		App->engineCamera->Focus(this->aabb);
 	}
 	else
 	{
