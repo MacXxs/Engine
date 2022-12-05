@@ -8,9 +8,11 @@
 
 #define DEFAULT_MOVE_SPEED 5.f
 #define DEFAULT_ROTATION_DEGREE 25
-#define DEFAULT_ROTATION_SPEED 2.5f
+#define DEFAULT_ROTATION_SPEED 5.f
 #define DEFAULT_MOUSE_SPEED_MODIFIER 10.f
 #define DEFAULT_SHIFT_ACCELERATION 2.f
+
+#define ORBIT_SPEED_MULTIPLIER 2.f
 
 #define MAX_MOUSE_SPEED_MODIFIER 50.f
 #define MAX_HFOV 120
@@ -30,13 +32,13 @@ public:
 	update_status Update();
 
 	void Move();
-	void Rotate();
-	void Rotate(const float3x3& rotationMatrix);
+	void KeyboardRotate();
+	void ApplyRotation(const float3x3& rotationMatrix);
 	void FreeLook();
 	void Run();
 	void Walk();
 	void Zoom();
-	void Focus(const AABB &aabb);
+	void Focus(const AABB& aabb);
 	void Orbit(const AABB& aabb);
 
 	void SetHFOV(float fov);

@@ -40,7 +40,6 @@ bool ModuleEngineCamera::Init()
 
 update_status ModuleEngineCamera::Update()
 {
-
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) != KeyState::IDLE)
 		Run();
 	else
@@ -63,10 +62,13 @@ update_status ModuleEngineCamera::Update()
 	if (App->input->GetKey(SDL_SCANCODE_LALT) != KeyState::IDLE && 
 		App->input->GetMouseButton(SDL_BUTTON_LEFT) != KeyState::IDLE)
 	{
-		Orbit(App->renderer->GetModel(0)->GetAABB());
+		const AABB& aabb = App->renderer->GetModel(0)->GetAABB();
+
+		SetLookAt(aabb.CenterPoint());
+		Orbit(aabb);
 	}
 	
-	Rotate();
+	KeyboardRotate();
 
 	return UPDATE_CONTINUE;
 }
@@ -112,7 +114,7 @@ void ModuleEngineCamera::Move()
 	}
 }
 
-void ModuleEngineCamera::Rotate()
+void ModuleEngineCamera::KeyboardRotate()
 {
 	float yaw = 0.f, pitch = 0.f;
 
@@ -145,18 +147,14 @@ void ModuleEngineCamera::Rotate()
 	float3x3 rotationMatrixY = float3x3::FromQuat(yawQuat);
 	float3x3 rotationDeltaMatrix = rotationMatrixX * rotationMatrixY;
 
-	vec oldUp = frustum.Up().Normalized();
-	frustum.SetUp(rotationDeltaMatrix.MulDir(oldUp));
-
-	vec oldFront = frustum.Front().Normalized();
-	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
+	ApplyRotation(rotationDeltaMatrix);
 }
 
-void ModuleEngineCamera::Rotate(const float3x3& rotationMatrix) {
+void ModuleEngineCamera::ApplyRotation(const float3x3& rotationMatrix) {
 	vec oldFront = frustum.Front().Normalized();
 	vec oldUp = frustum.Up().Normalized();
-	frustum.SetFront(rotationMatrix * oldFront);
-	frustum.SetUp(rotationMatrix * oldUp);
+	frustum.SetFront(rotationMatrix.MulDir(oldFront));
+	frustum.SetUp(rotationMatrix.MulDir(oldUp));
 }
 
 void ModuleEngineCamera::FreeLook()
@@ -184,11 +182,7 @@ void ModuleEngineCamera::FreeLook()
 	float3x3 rotationMatrixY = float3x3::FromQuat(yawQuat);
 	float3x3 rotationDeltaMatrix = rotationMatrixX * rotationMatrixY;
 
-	vec oldUp = frustum.Up().Normalized();
-	frustum.SetUp(rotationDeltaMatrix.MulDir(oldUp));
-
-	vec oldFront = frustum.Front().Normalized();
-	frustum.SetFront(rotationDeltaMatrix.MulDir(oldFront));
+	ApplyRotation(rotationDeltaMatrix);
 }
 
 void ModuleEngineCamera::Run()
@@ -226,18 +220,23 @@ void ModuleEngineCamera::Focus(const AABB &aabb)
 
 void ModuleEngineCamera::Orbit(const AABB& aabb)
 {
-	float xDistance = aabb.MaxX() - aabb.MinX();
-	float yDistance = aabb.MaxY() - aabb.MinY();
-	float zDistance = aabb.MaxZ() - aabb.MinZ();
-	float maxDistance = Max(Max(xDistance, yDistance), zDistance);
+	float distance = aabb.CenterPoint().Distance(position);
 
-	vec oldFocus = frustum.Pos() + frustum.Front().Normalized() * maxDistance * 2.f;
+	ENGINE_LOG("%f", distance);
 
-	Rotate(float3x3::RotateAxisAngle(frustum.WorldRight().Normalized(), 
-		DegToRad(-App->input->GetMouseMotionY() * rotationSpeed)));
-	Rotate(float3x3::RotateY(DegToRad(-App->input->GetMouseMotionX() * rotationSpeed)));
+	vec oldFocus = position + frustum.Front().Normalized() * distance;
 
-	vec newFocus = frustum.Pos() + frustum.Front().Normalized() * maxDistance * 2.f;
+	ApplyRotation(float3x3::RotateAxisAngle(
+		frustum.WorldRight().Normalized(), 
+		DegToRad(-App->input->GetMouseMotionY() * rotationSpeed * 
+			ORBIT_SPEED_MULTIPLIER * App->deltaTime)
+	));
+	ApplyRotation(float3x3::RotateY(
+		DegToRad(-App->input->GetMouseMotionX() * rotationSpeed * 
+			ORBIT_SPEED_MULTIPLIER * App->deltaTime)
+	));
+
+	vec newFocus = position + frustum.Front().Normalized() * distance;
 
 	position = position + (oldFocus - newFocus);
 	frustum.SetPos(position);
