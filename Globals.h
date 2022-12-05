@@ -25,4 +25,5 @@ enum update_status
 #define TITLE "Super Awesome Engine"
 
 // Paths -------------------
+#define MODELS_PATH "Assets/models/"
 #define TEXTURES_PATH "Assets/textures/"

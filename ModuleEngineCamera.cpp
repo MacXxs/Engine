@@ -1,13 +1,15 @@
 #include "Application.h"
+
 #include "ModuleEngineCamera.h"
 #include "ModuleWindow.h"
 #include "ModuleInput.h"
 #include "ModuleRender.h"
 
-#include "Libraries/MathGeoLib/src/Math/float3x3.h"
-#include "Libraries/MathGeoLib/src/Math/Quat.h"
-#include "Libraries/MathGeoLib/src/Math/MathAll.h"
-#include "GL/glew.h"
+#include <MathGeoLib/src/Math/float3x3.h>
+#include <MathGeoLib/src/Math/Quat.h>
+#include <MathGeoLib/src/Math/MathAll.h>
+
+#include <GL/glew.h>
 
 ModuleEngineCamera::ModuleEngineCamera() {};
 
@@ -221,7 +223,8 @@ void ModuleEngineCamera::Focus(const AABB &aabb)
 	float zDistance = aabb.MaxZ() - aabb.MinZ();
 	float maxDistance = Max(Max(xDistance, yDistance), zDistance);
 
-	position = float3(point.x, point.y, point.z + maxDistance*2.f);
+	position = point + float3::unitZ * maxDistance * 2.f;
+
 	SetLookAt(point);
 
 	frustum.SetPos(position);
@@ -231,9 +234,7 @@ void ModuleEngineCamera::Orbit(const AABB& aabb)
 {
 	float distance = aabb.CenterPoint().Distance(position);
 
-	ENGINE_LOG("%f", distance);
-
-	vec oldFocus = position + frustum.Front().Normalized() * distance;
+	vec oldPosition = position + frustum.Front().Normalized() * distance;
 
 	ApplyRotation(float3x3::RotateAxisAngle(
 		frustum.WorldRight().Normalized(), 
@@ -245,9 +246,10 @@ void ModuleEngineCamera::Orbit(const AABB& aabb)
 			ORBIT_SPEED_MULTIPLIER * App->deltaTime)
 	));
 
-	vec newFocus = position + frustum.Front().Normalized() * distance;
+	vec newPosition = position + frustum.Front().Normalized() * distance;
 
-	position = position + (oldFocus - newFocus);
+	position = position + (oldPosition - newPosition);
+
 	frustum.SetPos(position);
 }
 
@@ -284,17 +286,13 @@ void ModuleEngineCamera::SetOrientation(float3 orientation)
 
 void ModuleEngineCamera::SetLookAt(float3 lookAt)
 {
-	float3 direction = lookAt - frustum.Pos();
-
-	vec oldUp = frustum.Up().Normalized();
-	vec oldFront = frustum.Front().Normalized();
+	float3 direction = lookAt - position;
 
 	float3x3 rotationMatrix = float3x3::LookAt(
 		frustum.Front().Normalized(), direction.Normalized(), frustum.Up(), float3::unitY
 	);
 	
-	frustum.SetUp(rotationMatrix * oldUp);
-	frustum.SetFront(rotationMatrix * oldFront);
+	ApplyRotation(rotationMatrix);
 }
 
 void ModuleEngineCamera::SetMoveSpeed(float speed)

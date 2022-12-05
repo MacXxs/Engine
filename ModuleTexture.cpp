@@ -2,12 +2,13 @@
 #include "Globals.h"
 
 #include <string>
+#include <sys/stat.h>
 
-#include "GL/glew.h"
-#include "Libraries/DirectXTex/DirectXTex.h"
+#include <GL/glew.h>
+#include <DirectXTex/DirectXTex.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "Libraries/stb_image.h"
+#include <stb_image.h>
 
 ModuleTexture::ModuleTexture()
 {
@@ -98,6 +99,29 @@ GLuint ModuleTexture::Load(const char* fileName)
 	GLuint texture;
 
 	std::string texturePath = TEXTURES_PATH + std::string(fileName);
+	
+	struct stat buffer;
+	// Cheking by name
+	if (stat(fileName, &buffer) != 0)
+	{
+		//Checking in models folder
+		if (stat((MODELS_PATH + std::string(fileName)).c_str(), &buffer) != 0)
+		{
+			// Cheking in textures folder
+			if (stat((TEXTURES_PATH + std::string(fileName)).c_str(), &buffer) != 0)
+			{
+				ENGINE_LOG("Texture not found!");
+			}
+			else
+				texturePath = TEXTURES_PATH + std::string(fileName);
+		}
+		else
+			texturePath = MODELS_PATH + std::string(fileName);
+	}
+	else
+		texturePath = std::string(fileName);
+
+	ENGINE_LOG("----- Texture path: %s -----", &texturePath[0]);
 
 	std::string narrow_string(texturePath);
 	std::wstring wide_string = std::wstring(narrow_string.begin(), narrow_string.end());

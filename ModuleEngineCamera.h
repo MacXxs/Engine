@@ -3,8 +3,8 @@
 #include "Module.h"
 #include "ModuleDebugDraw.h"
 
-#include "Libraries/MathGeoLib/src/Geometry/Frustum.h"
-#include "Libraries/MathGeoLib/src/Math/float4x4.h"
+#include <MathGeoLib/src/Geometry/Frustum.h>
+#include <MathGeoLib/src/Math/float4x4.h>
 
 #define DEFAULT_MOVE_SPEED 5.f
 #define DEFAULT_ROTATION_DEGREE 25
@@ -54,6 +54,7 @@ public:
 
 	float4x4 GetProjectionMatrix() const;
 	float4x4 GetViewMatrix() const;
+
 	float GetHFOV() const;
 	float GetVFOV() const;
 	float GetZNear() const;
@@ -63,7 +64,6 @@ public:
 	float GetDistance(float3 point) const;
 
 private:
-
 	Frustum frustum;
 	float3 position;
 	float aspectRatio;
