@@ -107,14 +107,14 @@ int main(int argc, char ** argv)
 		// Capping framerate and storing it
 		float dt = (float)(SDL_GetTicks() - oldTick) / 1000.0f;
 		
-		if (dt < (1000.0f / MAX_FRAMERATE))
+		if (dt < (1000.0f / App->GetMaxFrameRate()))
 		{
-			SDL_Delay((1000.0f / MAX_FRAMERATE) - dt);
+			SDL_Delay((1000.0f / App->GetMaxFrameRate()) - dt);
 		}
 		
 		App->deltaTime = (float)(SDL_GetTicks() - oldTick) / 1000.0f;
 		App->fps = 1 / App->deltaTime;
-		App->AddFrame(App->fps);
+		App->AddFrame(App->fps, App->deltaTime);
 	}
 
 	delete App;

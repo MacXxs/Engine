@@ -27,9 +27,6 @@ bool ModuleWindow::Init()
 		//Create window
 		SDL_DisplayMode DM;
 		SDL_GetCurrentDisplayMode(0, &DM);
-		auto Width = DM.w;
-		auto Height = DM.h;
-
 		int width = DM.w;
 		int height = DM.h - 60;
 
@@ -52,7 +49,8 @@ bool ModuleWindow::Init()
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
+			width, height, flags);
 
 		if(window == NULL)
 		{
@@ -86,4 +84,20 @@ bool ModuleWindow::CleanUp()
 	SDL_Quit();
 	return true;
 }
+
+std::pair<int, int> ModuleWindow::GetWindowSize() const
+{
+	int width, height;
+
+	SDL_GetWindowSize(this->window, &width, &height);
+
+	return std::make_pair(width, height);
+}
+
+void ModuleWindow::SetWindowSize(int width, int height)
+{
+	SDL_SetWindowSize(this->window, width, height);
+}
+
+
 

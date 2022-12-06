@@ -16,10 +16,14 @@ public:
 	virtual ~ModuleWindow();
 
 	// Called before quitting
-	bool Init();
+	bool Init() override;
 
 	// Called before quitting
-	bool CleanUp();
+	bool CleanUp() override;
+
+	std::pair<int, int> GetWindowSize() const;
+
+	void SetWindowSize(int width, int height);
 
 public:
 	//The window we'll be rendering to

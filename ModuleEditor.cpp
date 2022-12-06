@@ -140,9 +140,35 @@ update_status ModuleEditor::Update()
 			if (ImGui::CollapsingHeader("Application", ImGuiTreeNodeFlags_DefaultOpen))
 			{
 				char title[25];
-				sprintf_s(title, 25, "Framerate %.1f", App->fpsHist[App->fpsHist.size() - 1]);
-				ImGui::PlotHistogram("##framerate", &App->fpsHist[0], App->fpsHist.size(), 0, 
-					title, 0.0f, 100, ImVec2(310, 100));
+				int maxFPS = App->GetMaxFrameRate();
+
+				ImGui::Text("Engine name: "); 
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), TITLE);
+				
+				if (ImGui::SliderInt("Max FPS", &maxFPS, 0, 100))
+					App->SetMaxFrameRate(maxFPS);
+
+				sprintf_s(title, 25, "Framerate %.1f", App->fpsLog[App->fpsLog.size() - 1]);
+				ImGui::PlotHistogram("##framerate", &App->fpsLog[0], App->fpsLog.size(), 0, 
+					title, 0.0f, 100.0f, ImVec2(310, 100));
+				sprintf_s(title, 25, "Milliseconds %0.1f", App->msLog[App->msLog.size() - 1]);
+				ImGui::PlotHistogram("##milliseconds", &App->msLog[0], App->msLog.size(), 0,
+					title, 0.0f, 40.0f, ImVec2(310, 100));
+			}
+
+			if (ImGui::CollapsingHeader("Window", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				std::pair<int, int> windowDimensions;
+				windowDimensions = App->window->GetWindowSize();
+
+				SDL_DisplayMode DM;
+				SDL_GetCurrentDisplayMode(0, &DM);
+
+				if (ImGui::SliderInt("Width", &windowDimensions.first, 320, DM.w))
+					App->window->SetWindowSize(windowDimensions.first, windowDimensions.second);
+				if (ImGui::SliderInt("Height", &windowDimensions.second, 160, DM.h))
+					App->window->SetWindowSize(windowDimensions.first, windowDimensions.second);
 			}
 		}
 

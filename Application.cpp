@@ -12,11 +12,12 @@
 
 using namespace std;
 
-const int MAX_FRAMES = 50;
+constexpr int FRAMES_BUFFER = 50;
 
 Application::Application()
 {
-	fpsHist = std::vector<float>(MAX_FRAMES, 0.0f);
+	fpsLog = std::vector<float>(FRAMES_BUFFER, 0.0f);
+	msLog = std::vector<float>(FRAMES_BUFFER, 0.0f);
 
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
@@ -83,10 +84,24 @@ bool Application::CleanUp()
 	return ret;
 }
 
-void Application::AddFrame(int fps)
+void Application::AddFrame(int fps, float ms)
 {
-	for (unsigned i = 0; i < MAX_FRAMES - 1; ++i)
-		fpsHist[i] = fpsHist[i+1];
+	for (unsigned i = 0; i < FRAMES_BUFFER - 1; ++i)
+	{
+		fpsLog[i] = fpsLog[i + 1];
+		msLog[i] = msLog[i + 1];
+	}
 
-	fpsHist[MAX_FRAMES - 1] = fps;
+	fpsLog[FRAMES_BUFFER - 1] = fps;
+	msLog[FRAMES_BUFFER - 1] = ms * 1000.0f;
+}
+
+void Application::SetMaxFrameRate(int maxFrames)
+{
+	this->maxFramerate = maxFrames;
+}
+
+int Application::GetMaxFrameRate() const
+{
+	return this->maxFramerate;
 }

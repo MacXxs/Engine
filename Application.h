@@ -27,7 +27,10 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-	void AddFrame(int fps);
+	void AddFrame(int fps, float ms);
+
+	void SetMaxFrameRate(int maxFrames);
+	int GetMaxFrameRate() const;
 
 public:
 	ModuleRender* renderer = nullptr;
@@ -40,13 +43,16 @@ public:
 	ModuleEngineCamera* engineCamera = nullptr;
 	ModuleTexture* textures = nullptr;
 
-public:
 	float deltaTime = 0.f;
 	int fps = 0;
-	std::vector<float> fpsHist;
+
+	std::vector<float> fpsLog;
+	std::vector<float> msLog;
 
 private:
 	std::list<Module*> modules;
+
+	int maxFramerate = MAX_FRAMERATE;
 };
 
 extern Application* App;
