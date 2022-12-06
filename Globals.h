@@ -5,10 +5,7 @@
 #include <windows.h>
 #include <stdio.h>
 
-//#define ENGINE_LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 #define GLSL_VERSION "#version 440"
-
-//void log(const char file[], int line, const char* format, ...);
 
 enum update_status
 {
@@ -18,6 +15,9 @@ enum update_status
 };
 
 // Configuration -----------
+#define MAX_FRAMERATE 80 
+ 
+// Window ------------------
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1080
 #define FULLSCREEN false
@@ -25,7 +25,7 @@ enum update_status
 #define BORDERLESS false
 #define RESIZABLE true
 #define VSYNC true
-#define TITLE "Super Awesome Engine"
+#define TITLE "Chrysalis Engine"
 
 // Paths -------------------
 #define MODELS_PATH "Assets/models/"

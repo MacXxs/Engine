@@ -12,8 +12,12 @@
 
 using namespace std;
 
+const int MAX_FRAMES = 50;
+
 Application::Application()
 {
+	fpsHist = std::vector<float>(MAX_FRAMES, 0.0f);
+
 	// Order matters: they will Init/start/update in this order
 	modules.push_back(window = new ModuleWindow());
 	modules.push_back(editor = new ModuleEditor());
@@ -77,4 +81,12 @@ bool Application::CleanUp()
 		ret = (*it)->CleanUp();
 
 	return ret;
+}
+
+void Application::AddFrame(int fps)
+{
+	for (unsigned i = 0; i < MAX_FRAMES - 1; ++i)
+		fpsHist[i] = fpsHist[i+1];
+
+	fpsHist[MAX_FRAMES - 1] = fps;
 }

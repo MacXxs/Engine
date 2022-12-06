@@ -26,11 +26,13 @@ int main(int argc, char ** argv)
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
-	Uint64 startTick;
+	Uint32 oldTick = SDL_GetTicks();
+	Uint32 newTick;
 
 	while (state != MAIN_EXIT)
 	{
-		startTick = SDL_GetTicks();
+		newTick = SDL_GetTicks();
+		oldTick = newTick;
 
 		switch (state)
 		{
@@ -100,11 +102,19 @@ int main(int argc, char ** argv)
 			state = MAIN_EXIT;
 
 			break;
-
 		}
 
-		App->deltaTime = (SDL_GetTicks() - startTick) / 1000.f;
-
+		// Capping framerate and storing it
+		float dt = (float)(SDL_GetTicks() - oldTick) / 1000.0f;
+		
+		if (dt < (1000.0f / MAX_FRAMERATE))
+		{
+			SDL_Delay((1000.0f / MAX_FRAMERATE) - dt);
+		}
+		
+		App->deltaTime = (float)(SDL_GetTicks() - oldTick) / 1000.0f;
+		App->fps = 1 / App->deltaTime;
+		App->AddFrame(App->fps);
 	}
 
 	delete App;

@@ -20,7 +20,10 @@ Model::Model()
 
 Model::~Model()
 {
-	meshes.clear();
+	ENGINE_LOG("Destroying model");
+
+	for (Mesh* mesh : meshes)
+		delete mesh;
 }
 
 void Model::Load(const char* fileName)

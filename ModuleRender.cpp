@@ -174,7 +174,10 @@ bool ModuleRender::CleanUp()
 
 	glDeleteBuffers(1, &this->vbo);
 
-	models.clear();
+	for (Model* model : models)
+	{
+		delete model;
+	}
 
 	//Destroy window
 

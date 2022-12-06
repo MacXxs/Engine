@@ -9,7 +9,7 @@ class Mesh
 {
 public:
 	Mesh(const aiMesh* mesh);
-	~Mesh() {};
+	~Mesh();
 
 	void LoadVBO(const aiMesh* mesh);
 	void LoadEBO(const aiMesh* mesh);

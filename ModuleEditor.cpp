@@ -11,6 +11,7 @@
 #include "Libraries/ImGui/imgui_impl_opengl3.h"
 
 static bool cameraOpened = false;
+static bool configOpened = false;
 static bool meshOpened = false;
 static bool consoleOpened = false;
 
@@ -70,6 +71,8 @@ update_status ModuleEditor::Update()
 			ImGui::EndMenu();
 		}
 
+		if (ImGui::MenuItem("Configuration")) configOpened = true;
+			 
 		if (ImGui::BeginMenu("View"))
 		{
 			if (ImGui::MenuItem("Mesh")) meshOpened = true;
@@ -77,8 +80,7 @@ update_status ModuleEditor::Update()
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::MenuItem("Console"))
-			consoleOpened = true;
+		if (ImGui::MenuItem("Console")) consoleOpened = true;
 
 		ImGui::EndMainMenuBar();
 	}
@@ -110,11 +112,11 @@ update_status ModuleEditor::Update()
 
 			if (ImGui::CollapsingHeader("Movement", ImGuiTreeNodeFlags_DefaultOpen))
 			{
-				if (ImGui::SliderFloat("Movement Speed", &movementSpeed, 
-										DEFAULT_MOVE_SPEED, DEFAULT_MOVE_SPEED * 10.f))
+				if (ImGui::SliderFloat("Movement Speed", &movementSpeed,
+					DEFAULT_MOVE_SPEED, DEFAULT_MOVE_SPEED * 10.f))
 					App->engineCamera->SetMoveSpeed(movementSpeed);
-				if (ImGui::SliderFloat("Rotation Speed (keyboard)", &rotationSpeed, 
-										DEFAULT_ROTATION_SPEED, DEFAULT_ROTATION_SPEED * 10.f))
+				if (ImGui::SliderFloat("Rotation Speed (keyboard)", &rotationSpeed,
+					DEFAULT_ROTATION_SPEED, DEFAULT_ROTATION_SPEED * 10.f))
 					App->engineCamera->SetRotationSpeed(rotationSpeed);
 			}
 
@@ -126,30 +128,30 @@ update_status ModuleEditor::Update()
 				if (ImGui::ColorEdit3("MyColor##1", (float*)&color))
 					App->renderer->SetBackgroundColor(color);
 			}
+		}
 
-			ImGui::End();
-		}
-		else
-		{
-			ImGui::End();
-		}
+		ImGui::End();
 	}
 
-	if (meshOpened)
+	if (configOpened)
 	{
-		if (ImGui::Begin("Mesh Information", &meshOpened))
+		if (ImGui::Begin("Configuration", &configOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			ImGui::End();
+			if (ImGui::CollapsingHeader("Application", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				char title[25];
+				sprintf_s(title, 25, "Framerate %.1f", App->fpsHist[App->fpsHist.size() - 1]);
+				ImGui::PlotHistogram("##framerate", &App->fpsHist[0], App->fpsHist.size(), 0, 
+					title, 0.0f, 100, ImVec2(310, 100));
+			}
 		}
-		else
-		{
-			ImGui::End();
-		}
+
+		ImGui::End();
 	}
 
 	if (consoleOpened)
 	{
-		if (ImGui::Begin("Log", &consoleOpened))
+		if (ImGui::Begin("Console log", &consoleOpened))
 		{
 			while (!engineLog->logLines.empty())
 			{

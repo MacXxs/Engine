@@ -1,6 +1,7 @@
 #pragma once
 
 #include<list>
+
 #include "Globals.h"
 #include "Module.h"
 
@@ -26,6 +27,8 @@ public:
 	update_status Update();
 	bool CleanUp();
 
+	void AddFrame(int fps);
+
 public:
 	ModuleRender* renderer = nullptr;
 	ModuleWindow* window = nullptr;
@@ -39,10 +42,11 @@ public:
 
 public:
 	float deltaTime = 0.f;
+	int fps = 0;
+	std::vector<float> fpsHist;
 
 private:
 	std::list<Module*> modules;
-
 };
 
 extern Application* App;
