@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="EngineLog.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Libraries\ImGui\imgui.cpp" />
     <ClCompile Include="Libraries\ImGui\imgui_demo.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="debugdraw.h" />
     <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="Dummy.h" />
+    <ClInclude Include="EngineLog.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Libraries\ImGui\imconfig.h" />
     <ClInclude Include="Libraries\ImGui\imgui.h" />

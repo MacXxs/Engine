@@ -25,6 +25,10 @@ Model::~Model()
 
 void Model::Load(const char* fileName)
 {
+	this->path = fileName;
+
+	ENGINE_LOG("Model: %s", fileName);
+
 	const aiScene* scene = aiImportFile(fileName, aiProcessPreset_TargetRealtime_MaxQuality);
 	if (scene)
 	{
@@ -51,7 +55,7 @@ void Model::LoadMaterials(const aiScene* scene)
 	{
 		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
 		{
-			textures.push_back(App->textures->Load(file.data));
+			textures.push_back(App->textures->Load(file.data, GetDirectory()));
 		}
 	}
 }
@@ -81,4 +85,23 @@ void Model::Draw()
 AABB Model::GetAABB() const
 {
 	return aabb;
+}
+
+const std::string Model::GetDirectory() const
+{
+	std::string directory = this->path;
+	bool found = false;
+
+	int i = directory.size() - 1;
+	for (; !found && i > 0; --i)
+	{
+		if (directory[i] == '\\') found = true;
+	}
+
+	if (true)
+	{
+		directory = directory.substr(0, i+2);
+	}
+
+	return directory;
 }

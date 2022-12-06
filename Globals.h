@@ -1,11 +1,14 @@
 #pragma once
+
+#include "EngineLog.h"
+
 #include <windows.h>
 #include <stdio.h>
 
-#define ENGINE_LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
+//#define ENGINE_LOG(format, ...) log(__FILE__, __LINE__, format, __VA_ARGS__);
 #define GLSL_VERSION "#version 440"
 
-void log(const char file[], int line, const char* format, ...);
+//void log(const char file[], int line, const char* format, ...);
 
 enum update_status
 {

@@ -1,5 +1,7 @@
-#include "ModuleEditor.h"
 #include "Application.h"
+#include "Globals.h"
+
+#include "ModuleEditor.h"
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleEngineCamera.h"
@@ -10,6 +12,7 @@
 
 static bool cameraOpened = false;
 static bool meshOpened = false;
+static bool consoleOpened = false;
 
 ModuleEditor::ModuleEditor() {}
 
@@ -73,6 +76,9 @@ update_status ModuleEditor::Update()
 
 			ImGui::EndMenu();
 		}
+
+		if (ImGui::MenuItem("Console"))
+			consoleOpened = true;
 
 		ImGui::EndMainMenuBar();
 	}
@@ -139,6 +145,25 @@ update_status ModuleEditor::Update()
 		{
 			ImGui::End();
 		}
+	}
+
+	if (consoleOpened)
+	{
+		if (ImGui::Begin("Log", &consoleOpened))
+		{
+			while (!engineLog->logLines.empty())
+			{
+				lines.push_back(engineLog->logLines.front().c_str());
+					engineLog->logLines.pop();
+			}
+
+			for (std::string line : lines)
+			{
+				ImGui::TextUnformatted(&line[0]);
+			}
+
+		}
+		ImGui::End();
 	}
 
 	return UPDATE_CONTINUE;

@@ -14,5 +14,8 @@ public:
 	update_status PreUpdate() override;
 	update_status Update() override;
 	update_status PostUpdate() override;
+
+private:
+	std::vector<std::string> lines;
 };
 

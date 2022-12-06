@@ -14,7 +14,7 @@ public:
 
 	update_status Update();
 
-	GLuint Load(const char* fileName);
+	GLuint Load(const char* fileName, const std::string filePath);
 
 public:
 	GLuint texture;

@@ -19,6 +19,7 @@ enum main_states
 };
 
 Application* App = NULL;
+EngineLog* engineLog = new EngineLog();
 
 int main(int argc, char ** argv)
 {

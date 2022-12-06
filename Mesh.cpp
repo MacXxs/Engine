@@ -8,6 +8,7 @@
 
 Mesh::Mesh(const aiMesh* mesh)
 {
+	ENGINE_LOG("--- Loading mesh ---", mesh->mName);
 	LoadVBO(mesh);
 	LoadEBO(mesh);
 	CreateVAO();
@@ -45,6 +46,8 @@ void Mesh::LoadVBO(const aiMesh* mesh)
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 	this->numVertices = mesh->mNumVertices;
+
+	ENGINE_LOG("Generated VBO %i with %i vertices", vbo, numVertices);
 }
 
 void Mesh::LoadEBO(const aiMesh* mesh)
@@ -66,6 +69,8 @@ void Mesh::LoadEBO(const aiMesh* mesh)
 
 	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 	numIndexes = mesh->mNumFaces * 3;
+
+	ENGINE_LOG("Generated EBO %i with %i indexes", ebo, numIndexes);
 }
 
 void Mesh::CreateVAO()
@@ -81,6 +86,8 @@ void Mesh::CreateVAO()
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * this->numVertices));
+
+	ENGINE_LOG("Generated VAO %i", vao);
 }
 
 void Mesh::Draw(const std::vector<unsigned>& model_textures)

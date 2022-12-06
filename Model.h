@@ -21,9 +21,13 @@ public:
 	void LoadMeshes(const aiScene* scene);
 	void Draw();
 
+	const std::string GetDirectory() const;
+
 	AABB GetAABB() const;
 
 private:
+	const char* path;
+
 	std::vector<unsigned> textures;
 	std::vector<Mesh*> meshes;
 	
