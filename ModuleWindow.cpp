@@ -28,23 +28,29 @@ bool ModuleWindow::Init()
 		SDL_DisplayMode DM;
 		SDL_GetCurrentDisplayMode(0, &DM);
 		int width = DM.w;
-		int height = DM.h - 60;
+		int height = DM.h - TOP_WINDOWED_PADDING;
+
+		this->fullscreen = FULLSCREEN;
+		this->borderless = BORDERLESS;
+		this->resizable = RESIZABLE;
+		this->fullscreenDesktop = FULLSCREEN_DESKTOP;
+		this->brightness = BRIGHTNESS;
 
 		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
 
-		if(FULLSCREEN == true)
+		if(this->fullscreen == true)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
-		else if (BORDERLESS == true)
+		else if (this->borderless == true)
 		{
 			flags |= SDL_WINDOW_BORDERLESS;
 		}
-		else if (RESIZABLE == true)
+		else if (this->resizable == true)
 		{
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
-		else if (FULLSCREEN_DESKTOP == true)
+		else if (this->fullscreenDesktop == true)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
@@ -94,9 +100,96 @@ std::pair<int, int> ModuleWindow::GetWindowSize() const
 	return std::make_pair(width, height);
 }
 
+bool ModuleWindow::GetFullscreen() const
+{
+	return this->fullscreen;
+}
+
+bool ModuleWindow::GetBorderless() const
+{
+	return this->borderless;
+}
+
+bool ModuleWindow::GetResizable() const
+{
+	return this->resizable;
+}
+
+bool ModuleWindow::GetFulscreenDesktop() const
+{
+	return this->fullscreenDesktop;
+}
+
+float ModuleWindow::GetBrightness() const
+{
+	return this->brightness;
+}
+
 void ModuleWindow::SetWindowSize(int width, int height)
 {
 	SDL_SetWindowSize(this->window, width, height);
+}
+
+void ModuleWindow::SetWindowType(bool fullscreen, bool borderless,
+	bool resizable, bool fullscrnDsktp)
+{
+	ENGINE_LOG("---- Changing window mode ----")
+
+	bool ret = true;
+	SDL_DisplayMode DM;
+	SDL_GetCurrentDisplayMode(0, &DM);
+	int width = DM.w;
+	int height = DM.h - TOP_WINDOWED_PADDING;
+
+	this->fullscreen = fullscreen;
+	this->borderless = borderless;
+	this->resizable = resizable;
+	this->fullscreenDesktop = fullscrnDsktp;
+
+	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+	if (this->fullscreen == true)
+	{
+		flags |= SDL_WINDOW_FULLSCREEN;
+	}
+	else if (this->borderless == true)
+	{
+		flags |= SDL_WINDOW_BORDERLESS;
+	}
+	else if (this->resizable == true)
+	{
+		flags |= SDL_WINDOW_RESIZABLE;
+	}
+	else if (this->fullscreenDesktop == true)
+	{
+		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+
+	window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		width, height, flags);
+
+	if (window == NULL)
+	{
+		ENGINE_LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
+		ret = false;
+	}
+	else
+	{
+		SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
+		//Get window surface
+		screen_surface = SDL_GetWindowSurface(window);
+	}
+}
+
+void ModuleWindow::SetBrightness(float brightness)
+{
+	this->brightness = brightness;
+
+	if (SDL_SetWindowBrightness(this->window, brightness))
+	{
+		ENGINE_LOG("Error setting window brightness: %s", &SDL_GetError()[0]);
+	}
 }
 
 

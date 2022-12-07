@@ -15,9 +15,6 @@
 #include <MathGeoLib/src/Math/float3.h>
 
 #include <GL/glew.h>
-#include <SDL.h>
-
-
 
 void __stdcall OurOpenGLErrorFunction(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
@@ -66,10 +63,6 @@ bool ModuleRender::Init()
 {
 	ENGINE_LOG("--------- Render Init ----------");
 
-	/*App->window->window = SDL_CreateWindow(
-		"SDL2/OpenGL Demo", 0, 0, SCREEN_WIDTH, SCREEN_WIDTH,
-		SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);*/
-
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4); // desired version
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
@@ -77,6 +70,25 @@ bool ModuleRender::Init()
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1); // we want a double buffer
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // we want to have a depth buffer with 24 bits
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); // we want to have a stencil buffer with 8 bits
+
+	SDL_GetVersion(&sdlVersion);
+
+	this->cacheLineSize = SDL_GetCPUCacheLineSize();
+	this->cpuCount = SDL_GetCPUCount();
+	this->ram = SDL_GetSystemRAM();
+
+	// CAPS
+	if (SDL_Has3DNow()) sprintf_s(caps, 75, "%s3DNow, ", caps);
+	if (SDL_HasAltiVec()) sprintf_s(caps, 75, "%sAltiVec, ", caps);
+	if (SDL_HasAVX()) sprintf_s(caps, 75, "%sAVX, ", caps);
+	if (SDL_HasAVX2()) sprintf_s(caps, 75, "%sAVX2, ", caps);
+	if (SDL_HasMMX()) sprintf_s(caps, 75, "%sMMX, ", caps);
+	if (SDL_HasRDTSC()) sprintf_s(caps, 75, "%sRDTSC, ", caps);
+	if (SDL_HasSSE()) sprintf_s(caps, 75, "%sSSE, ", caps);
+	if (SDL_HasSSE2()) sprintf_s(caps, 75, "%sSSE2, ", caps);
+	if (SDL_HasSSE3()) sprintf_s(caps, 75, "%sSSE3, ", caps);
+	if (SDL_HasSSE41()) sprintf_s(caps, 75, "%sSSE41, ", caps);
+	if (SDL_HasSSE42()) sprintf_s(caps, 75, "%sSSE42, ", caps);
 
 	this->context = SDL_GL_CreateContext(App->window->window);
 
@@ -117,10 +129,10 @@ bool ModuleRender::Start()
 
 	App->program->CreateProgram(vertexShader, fragmentShader);
 
-	/*Model* bakerHouse = new Model;
+	Model* bakerHouse = new Model;
 	bakerHouse->Load("Assets/models/BakerHouse.fbx");
 
-	models.push_back(bakerHouse);*/
+	models.push_back(bakerHouse);
 
 	return true;
 }
@@ -202,6 +214,31 @@ float4 ModuleRender::GetBackgroundColor() const
 Model* ModuleRender::GetModel(unsigned pos) const
 {
 	return models[pos];
+}
+
+const SDL_version& ModuleRender::GetSDLVersion() const
+{
+	return this->sdlVersion;
+}
+
+int ModuleRender::GetCPUCount() const
+{
+	return this->cpuCount;
+}
+
+int ModuleRender::GetCacheLineSize() const
+{
+	return this->cacheLineSize;
+}
+
+float ModuleRender::GetRamGB() const
+{
+	return (float)this->ram/1024.0f;
+}
+
+const char* ModuleRender::GetCaps() const
+{
+	return this->caps;
 }
 
 bool ModuleRender::LoadModel(const char* path)

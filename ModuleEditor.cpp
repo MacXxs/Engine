@@ -6,9 +6,11 @@
 #include "ModuleRender.h"
 #include "ModuleEngineCamera.h"
 
-#include "Libraries/ImGui/imgui.h"
-#include "Libraries/ImGui/imgui_impl_sdl.h"
-#include "Libraries/ImGui/imgui_impl_opengl3.h"
+#include <ImGui/imgui.h>
+#include <ImGui/imgui_impl_sdl.h>
+#include <ImGui/imgui_impl_opengl3.h>
+
+#include <GL/glew.h>
 
 static bool cameraOpened = false;
 static bool configOpened = false;
@@ -162,6 +164,14 @@ update_status ModuleEditor::Update()
 				std::pair<int, int> windowDimensions;
 				windowDimensions = App->window->GetWindowSize();
 
+				bool fullscreen = App->window->GetFullscreen();
+				bool borderless = App->window->GetBorderless();
+				bool resizable = App->window->GetResizable();
+				bool fullscreenDsktp = App->window->GetFulscreenDesktop();
+				bool modified = false;
+
+				float brightness = App->window->GetBrightness();
+
 				SDL_DisplayMode DM;
 				SDL_GetCurrentDisplayMode(0, &DM);
 
@@ -169,6 +179,75 @@ update_status ModuleEditor::Update()
 					App->window->SetWindowSize(windowDimensions.first, windowDimensions.second);
 				if (ImGui::SliderInt("Height", &windowDimensions.second, 160, DM.h))
 					App->window->SetWindowSize(windowDimensions.first, windowDimensions.second);
+
+				if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f))
+					App->window->SetBrightness(brightness);
+
+				if (ImGui::Checkbox("Fullscreen", &fullscreen)) modified = true;
+				ImGui::SameLine();
+				if (ImGui::Checkbox("Borderless", &borderless)) modified = true;
+				if (ImGui::Checkbox("Resizable", &resizable)) modified = true;
+				ImGui::SameLine();
+				if (ImGui::Checkbox("Full Desktop", &fullscreenDsktp)) modified = true;
+				if (modified)
+				{
+					App->window->SetWindowType(
+						fullscreen, borderless, resizable, fullscreenDsktp
+					);
+				}
+			}
+
+			if (ImGui::CollapsingHeader("Hardware", ImGuiTreeNodeFlags_DefaultOpen))
+			{
+				SDL_version version = App->renderer->GetSDLVersion();
+
+				ImGui::Text("SDL Version: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%u.%u.%u", 
+					version.major, version.minor, version.patch);
+				ImGui::Text("OpenGL version: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", glGetString(GL_VERSION));
+				ImGui::Text("GLSL: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", 
+					glGetString(GL_SHADING_LANGUAGE_VERSION));
+
+				ImGui::Separator();
+
+				ImGui::Text("CPUs: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "CPUs: %i (Cache: %iKB)",
+					App->renderer->GetCPUCount(), App->renderer->GetCacheLineSize());
+
+				ImGui::Text("System RAM: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%0.2f GB", App->renderer->GetRamGB());
+
+				ImGui::Text("Caps: "); ImGui::SameLine();
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+				ImGui::TextWrapped(App->renderer->GetCaps());
+				ImGui::PopStyleColor(1);
+
+				ImGui::Separator();
+
+				ImGui::Text("GPU: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%s", glGetString(GL_VENDOR));
+				ImGui::Text("Brand: "); ImGui::SameLine();
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));
+				ImGui::TextWrapped("%s", glGetString(GL_RENDERER));
+				ImGui::PopStyleColor(1);
+				
+				GLint ramBudget, ramUsage, ramAvailable, ramReserved;
+				glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &ramBudget);
+				glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &ramAvailable);
+				glGetIntegerv(GL_GPU_MEMORY_INFO_EVICTED_MEMORY_NVX, &ramReserved);
+				ramUsage = ramBudget - ramAvailable;
+
+
+				ImGui::Text("VRAM Budget: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%0.2f MB", ramBudget / 1024.0f);
+				ImGui::Text("VRAM Usage: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%0.2f MB", ramUsage / 1024.0f);
+				ImGui::Text("VRAM Available: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%0.2f MB", ramAvailable / 1024.0f);
+				ImGui::Text("VRAM Reserved: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%0.2f MB", ramReserved / 1024.0f);
 			}
 		}
 

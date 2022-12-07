@@ -14,6 +14,9 @@ enum update_status
 	UPDATE_ERROR
 };
 
+// Application -------------
+#define TITLE "Chrysalis Engine"
+
 // Configuration -----------
 #define MAX_FRAMERATE 80 
  
@@ -25,7 +28,7 @@ enum update_status
 #define BORDERLESS false
 #define RESIZABLE true
 #define VSYNC true
-#define TITLE "Chrysalis Engine"
+#define BRIGHTNESS 1.0f
 
 // Paths -------------------
 #define MODELS_PATH "Assets/models/"
