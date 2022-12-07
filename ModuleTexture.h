@@ -19,9 +19,6 @@ public:
 	int GetWidth() const;
 	int GetHeight() const;
 
-public:
-	GLuint texture;
-
 private:
 	int width, height;
 };

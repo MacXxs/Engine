@@ -26,6 +26,7 @@ public:
 	AABB GetAABB() const;
 	int GetNumVertices() const;
 	int GetNumTriangles() const;
+	unsigned GetTextureId() const;
 
 private:
 	const char* path;

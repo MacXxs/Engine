@@ -8,7 +8,6 @@
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleWindow.cpp" />
     <ClCompile Include="ModuleProgram.cpp" />
-    <ClCompile Include="ModuleRenderExercise.cpp" />
     <ClCompile Include="ModuleEditor.cpp" />
     <ClCompile Include="Libraries\ImGui\imgui.cpp" />
     <ClCompile Include="Libraries\ImGui\imgui_demo.cpp" />
@@ -78,7 +77,6 @@
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleWindow.h" />
     <ClInclude Include="ModuleProgram.h" />
-    <ClInclude Include="ModuleRenderExercise.h" />
     <ClInclude Include="ModuleEditor.h" />
     <ClInclude Include="Libraries\ImGui\imconfig.h" />
     <ClInclude Include="Libraries\ImGui\imgui.h" />

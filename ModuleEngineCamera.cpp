@@ -161,9 +161,11 @@ void ModuleEngineCamera::KeyboardRotate()
 	ApplyRotation(rotationDeltaMatrix);
 }
 
-void ModuleEngineCamera::ApplyRotation(const float3x3& rotationMatrix) {
+void ModuleEngineCamera::ApplyRotation(const float3x3& rotationMatrix) 
+{
 	vec oldFront = frustum.Front().Normalized();
 	vec oldUp = frustum.Up().Normalized();
+
 	frustum.SetFront(rotationMatrix.MulDir(oldFront));
 	frustum.SetUp(rotationMatrix.MulDir(oldUp));
 }
@@ -236,15 +238,24 @@ void ModuleEngineCamera::Orbit(const AABB& aabb)
 
 	vec oldPosition = position + frustum.Front().Normalized() * distance;
 
-	ApplyRotation(float3x3::RotateAxisAngle(
-		frustum.WorldRight().Normalized(), 
+	Quat verticalOrbit(
+		frustum.WorldRight(),
 		DegToRad(-App->input->GetMouseMotionY() * rotationSpeed * 
-			ORBIT_SPEED_MULTIPLIER * App->deltaTime)
-	));
-	ApplyRotation(float3x3::RotateY(
-		DegToRad(-App->input->GetMouseMotionX() * rotationSpeed * 
-			ORBIT_SPEED_MULTIPLIER * App->deltaTime)
-	));
+			ORBIT_SPEED_MULTIPLIER * App->deltaTime
+		)
+	);
+	Quat sideOrbit(
+		float3::unitY, 
+		DegToRad(-App->input->GetMouseMotionX() * rotationSpeed *
+			ORBIT_SPEED_MULTIPLIER * App->deltaTime
+		)
+	);
+
+	float3x3 rotationMatrixX = float3x3::FromQuat(verticalOrbit);
+	float3x3 rotationMatrixY = float3x3::FromQuat(sideOrbit);
+	float3x3 rotationDeltaMatrix = rotationMatrixX * rotationMatrixY;
+
+	ApplyRotation(rotationDeltaMatrix);
 
 	vec newPosition = position + frustum.Front().Normalized() * distance;
 

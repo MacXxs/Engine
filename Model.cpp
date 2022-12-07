@@ -23,7 +23,12 @@ Model::~Model()
 	ENGINE_LOG("Destroying model");
 
 	for (Mesh* mesh : meshes)
+	{
 		delete mesh;
+		mesh = nullptr;
+	}
+
+	meshes.clear();
 }
 
 void Model::Load(const char* fileName)
@@ -101,9 +106,9 @@ const std::string Model::GetDirectory() const
 		if (directory[i] == '\\') found = true;
 	}
 
-	if (true)
+	if (found)
 	{
-		directory = directory.substr(0, i+2);
+		directory = directory.substr(0, i + 2);
 	}
 
 	return directory;
@@ -119,6 +124,11 @@ int Model::GetNumVertices() const
 	}
 
 	return count;
+}
+
+unsigned Model::GetTextureId() const
+{
+	return this->textures[0];
 }
 
 int Model::GetNumTriangles() const

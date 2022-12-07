@@ -30,6 +30,8 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &this->vbo);
 	glDeleteBuffers(1, &this->ebo);
 	glDeleteVertexArrays(1, &this->vao);
+
+	delete vertices;
 }
 
 void Mesh::LoadVBO(const aiMesh* mesh)

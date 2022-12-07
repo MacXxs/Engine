@@ -4,7 +4,6 @@
 #include "ModuleRender.h"
 #include "ModuleInput.h"
 #include "ModuleProgram.h"
-#include "ModuleRenderExercise.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleEditor.h"
 #include "ModuleEngineCamera.h"

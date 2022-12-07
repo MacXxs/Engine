@@ -29,8 +29,7 @@ public:
 	float GetBrightness() const;
 
 	void SetWindowSize(int width, int height);
-	void SetWindowType(bool fullscreen = false, bool borderless = false,
-		bool resizable = false, bool fullscrnDsktp = false);
+	void SetWindowType(bool fullscreen, bool borderless, bool resizable, bool fullscrnDsktp);
 	void SetBrightness(float brightness);
 
 public:

@@ -36,21 +36,21 @@ bool ModuleWindow::Init()
 		this->fullscreenDesktop = FULLSCREEN_DESKTOP;
 		this->brightness = BRIGHTNESS;
 
-		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
+		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL | SDL_WINDOW_MAXIMIZED;
 
-		if(this->fullscreen == true)
+		if (this->fullscreen)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
-		else if (this->borderless == true)
+		if (this->borderless)
 		{
 			flags |= SDL_WINDOW_BORDERLESS;
 		}
-		else if (this->resizable == true)
+		if (this->resizable)
 		{
 			flags |= SDL_WINDOW_RESIZABLE;
 		}
-		else if (this->fullscreenDesktop == true)
+		if (this->fullscreenDesktop)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 		}
@@ -135,51 +135,27 @@ void ModuleWindow::SetWindowType(bool fullscreen, bool borderless,
 {
 	ENGINE_LOG("---- Changing window mode ----")
 
-	bool ret = true;
-	SDL_DisplayMode DM;
-	SDL_GetCurrentDisplayMode(0, &DM);
-	int width = DM.w;
-	int height = DM.h - TOP_WINDOWED_PADDING;
-
 	this->fullscreen = fullscreen;
 	this->borderless = borderless;
 	this->resizable = resizable;
 	this->fullscreenDesktop = fullscrnDsktp;
 
-	Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
-
-	if (this->fullscreen == true)
-	{
-		flags |= SDL_WINDOW_FULLSCREEN;
-	}
-	else if (this->borderless == true)
-	{
-		flags |= SDL_WINDOW_BORDERLESS;
-	}
-	else if (this->resizable == true)
-	{
-		flags |= SDL_WINDOW_RESIZABLE;
-	}
-	else if (this->fullscreenDesktop == true)
-	{
-		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	}
-
-	window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-		width, height, flags);
-
-	if (window == NULL)
-	{
-		ENGINE_LOG("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-		ret = false;
-	}
+	if (this->fullscreen)
+		SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN);
+	else if (this->fullscreenDesktop)
+		SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
 	else
-	{
-		SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+		SDL_SetWindowFullscreen(this->window, 0);
 
-		//Get window surface
-		screen_surface = SDL_GetWindowSurface(window);
-	}
+	if (this->borderless)
+		SDL_SetWindowBordered(this->window, SDL_TRUE);
+	else
+		SDL_SetWindowBordered(this->window, SDL_FALSE);
+
+	if (this->resizable)
+		SDL_SetWindowResizable(this->window, SDL_TRUE);
+	else
+		SDL_SetWindowResizable(this->window, SDL_FALSE);
 }
 
 void ModuleWindow::SetBrightness(float brightness)

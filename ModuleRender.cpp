@@ -191,6 +191,8 @@ bool ModuleRender::CleanUp()
 		delete model;
 	}
 
+	models.clear();
+
 	//Destroy window
 
 	return true;
@@ -250,6 +252,8 @@ bool ModuleRender::LoadModel(const char* path)
 
 	if (AnyModelLoaded())
 	{
+		delete models[0];
+		models[0] = nullptr;
 		models.clear();
 	}
 

@@ -303,8 +303,12 @@ update_status ModuleEditor::Update()
 		{
 			ImGui::SetWindowSize("About", ImVec2(300, 200));
 
-			ImGui::TextWrapped("%s created by Miquel Prieto Moline for \
-the Masters in AAA videogame development first assignment at UPC School.", TITLE);
+			ImGui::Text("%s - Version %s", TITLE, VERSION);
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::Text("Author: Miquel Prieto Moline");
+			ImGui::Dummy(ImVec2(0.0f, 2.5f));
+			ImGui::TextWrapped("Engine developed during the Masters degree in AAA videogame \
+development at UPC School.");
 
 			ImGui::End();
 		}
@@ -318,32 +322,49 @@ the Masters in AAA videogame development first assignment at UPC School.", TITLE
 			{
 				Model* model = App->renderer->GetModel(0);
 				ImGui::Text("TRANSFORMATION");
-				ImGui::Dummy(ImVec2(0.0f, 5.0f));
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
 				ImGui::TextWrapped("At the moment, no transformations are applied to any loaded model.");
 				
 				ImGui::Separator();
 				
 				ImGui::Text("GEOMETRY");
-				ImGui::Dummy(ImVec2(0.0f, 5.0f));
-				ImGui::Text("Number of vertices: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", model->GetNumVertices());
-				ImGui::Text("Number of triangles: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", model->GetNumTriangles());
-
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				if (ImGui::BeginTable("GeometryTable1", 2))
+				{
+					ImGui::TableNextColumn();
+					ImGui::Text("Number of vertices: ");
+					ImGui::TableNextColumn();
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", model->GetNumVertices());
+					ImGui::TableNextColumn();
+					ImGui::Text("Number of triangles: ");
+					ImGui::TableNextColumn();
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", model->GetNumTriangles());
+				
+					ImGui::EndTable();
+				}
 				ImGui::Separator();
 				
 				ImGui::Text("TEXTURE");
-				ImGui::Dummy(ImVec2(0.0f, 5.0f));
-				ImGui::Text("Height: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", App->textures->GetHeight());
-				ImGui::Text("Width: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", App->textures->GetWidth());
+				ImGui::Dummy(ImVec2(0.0f, 2.5f));
+				if (ImGui::BeginTable("TextureTable1", 2))
+				{
+					ImGui::TableNextColumn();
+					ImGui::Text("Height: ");
+					ImGui::TableNextColumn();
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", App->textures->GetHeight());
+					ImGui::TableNextColumn();
+					ImGui::Text("Width: ");
+					ImGui::TableNextColumn();
+					ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", App->textures->GetWidth());
+				
+					ImGui::EndTable();
+				}
+				ImGui::Image((void*)model->GetTextureId(), ImVec2(100.0f, 100.0f));
 			}
 
 			else ImGui::Text("There's no model loaded in scene.");
-
-			ImGui::End();
 		}
+		ImGui::End();
 	}
 
 	return status;
