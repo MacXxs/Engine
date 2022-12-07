@@ -24,6 +24,8 @@ public:
 	const std::string GetDirectory() const;
 
 	AABB GetAABB() const;
+	int GetNumVertices() const;
+	int GetNumTriangles() const;
 
 private:
 	const char* path;

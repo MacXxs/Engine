@@ -129,10 +129,10 @@ bool ModuleRender::Start()
 
 	App->program->CreateProgram(vertexShader, fragmentShader);
 
-	/*Model* bakerHouse = new Model;
+	Model* bakerHouse = new Model;
 	bakerHouse->Load("Assets/models/BakerHouse.fbx");
 
-	models.push_back(bakerHouse);*/
+	models.push_back(bakerHouse);
 
 	return true;
 }

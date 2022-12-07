@@ -108,3 +108,27 @@ const std::string Model::GetDirectory() const
 
 	return directory;
 }
+
+int Model::GetNumVertices() const
+{
+	int count = 0;
+
+	for (Mesh* mesh : meshes)
+	{
+		count += mesh->GetNumVertices();
+	}
+
+	return count;
+}
+
+int Model::GetNumTriangles() const
+{
+	int count = 0;
+
+	for (Mesh* mesh : meshes)
+	{
+		count += mesh->GetNumTriangles();
+	}
+
+	return count;
+}

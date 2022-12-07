@@ -127,7 +127,20 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 		flippedImg->GetMetadata().height, 0, format, type, flippedImg->GetPixels());
 	glGenerateMipmap(GL_TEXTURE_2D);
 
+	this->width = flippedImg->GetMetadata().width;
+	this->height = flippedImg->GetMetadata().height;
+
 	ENGINE_LOG("Texture %i loaded", texture);
 
 	return texture;
+}
+
+int ModuleTexture::GetWidth() const
+{
+	return this->width;
+}
+
+int ModuleTexture::GetHeight() const
+{
+	return this->height;
 }

@@ -5,6 +5,7 @@
 #include "ModuleWindow.h"
 #include "ModuleRender.h"
 #include "ModuleEngineCamera.h"
+#include "ModuleTexture.h"
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_impl_sdl.h>
@@ -12,10 +13,13 @@
 
 #include <GL/glew.h>
 
+#include <shellapi.h>
+
 static bool cameraOpened = false;
 static bool configOpened = false;
-static bool meshOpened = false;
 static bool consoleOpened = false;
+static bool aboutOpened = false;
+static bool propertiesOpened = false;
 
 ModuleEditor::ModuleEditor() {}
 
@@ -38,6 +42,8 @@ bool ModuleEditor::Start()
 {
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(GLSL_VERSION);
+
+	ImGui::SetWindowSize("Console log", ImVec2(500, 250));
 
 	return true;
 }
@@ -62,27 +68,35 @@ update_status ModuleEditor::PreUpdate()
 
 update_status ModuleEditor::Update()
 {
-	ImGui::ShowDemoWindow();
+	update_status status = UPDATE_CONTINUE;
+
+	//ImGui::ShowDemoWindow();
 
 	if (ImGui::BeginMainMenuBar())
-	{
-		if (ImGui::BeginMenu("Settings"))
+	{		 
+		if (ImGui::BeginMenu("Window"))
 		{
-			if (ImGui::MenuItem("Camera")) cameraOpened = true;
+			ImGui::MenuItem("Configuration", NULL, &configOpened);
+			ImGui::MenuItem("Camera", NULL, &cameraOpened);
 
 			ImGui::EndMenu();
 		}
 
-		if (ImGui::MenuItem("Configuration")) configOpened = true;
-			 
-		if (ImGui::BeginMenu("View"))
+		ImGui::MenuItem("Properties", NULL, &propertiesOpened);
+
+		ImGui::MenuItem("Console", NULL, &consoleOpened);
+
+		if (ImGui::BeginMenu("Help"))
 		{
-			if (ImGui::MenuItem("Mesh")) meshOpened = true;
+			if (ImGui::MenuItem("Github page"))
+				ShellExecute(0, 0, "https://github.com/MacXxs/Engine", 0, 0, SW_SHOW);
+
+			ImGui::MenuItem("About", NULL, &aboutOpened);
 
 			ImGui::EndMenu();
 		}
-
-		if (ImGui::MenuItem("Console")) consoleOpened = true;
+		
+		if (ImGui::MenuItem("Quit")) status = UPDATE_STOP;
 
 		ImGui::EndMainMenuBar();
 	}
@@ -183,12 +197,20 @@ update_status ModuleEditor::Update()
 				if (ImGui::SliderFloat("Brightness", &brightness, 0.0f, 1.0f))
 					App->window->SetBrightness(brightness);
 
-				if (ImGui::Checkbox("Fullscreen", &fullscreen)) modified = true;
-				ImGui::SameLine();
-				if (ImGui::Checkbox("Borderless", &borderless)) modified = true;
-				if (ImGui::Checkbox("Resizable", &resizable)) modified = true;
-				ImGui::SameLine();
-				if (ImGui::Checkbox("Full Desktop", &fullscreenDsktp)) modified = true;
+				if (ImGui::BeginTable("WindowTable1", 2))
+				{
+					ImGui::TableNextColumn(); 
+					if (ImGui::Checkbox("Fullscreen", &fullscreen)) modified = true;
+					ImGui::TableNextColumn();
+					if (ImGui::Checkbox("Borderless", &borderless)) modified = true;
+					ImGui::TableNextColumn();
+					if (ImGui::Checkbox("Resizable", &resizable)) modified = true;
+					ImGui::TableNextColumn();
+					if (ImGui::Checkbox("Full Desktop", &fullscreenDsktp)) modified = true;
+
+					ImGui::EndTable();
+				}
+				
 				if (modified)
 				{
 					App->window->SetWindowType(
@@ -239,7 +261,6 @@ update_status ModuleEditor::Update()
 				glGetIntegerv(GL_GPU_MEMORY_INFO_EVICTED_MEMORY_NVX, &ramReserved);
 				ramUsage = ramBudget - ramAvailable;
 
-
 				ImGui::Text("VRAM Budget: "); ImGui::SameLine();
 				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%0.2f MB", ramBudget / 1024.0f);
 				ImGui::Text("VRAM Usage: "); ImGui::SameLine();
@@ -276,7 +297,56 @@ update_status ModuleEditor::Update()
 		ImGui::End();
 	}
 
-	return UPDATE_CONTINUE;
+	if (aboutOpened)
+	{
+		if (ImGui::Begin("About", &aboutOpened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+		{
+			ImGui::SetWindowSize("About", ImVec2(300, 200));
+
+			ImGui::TextWrapped("%s created by Miquel Prieto Moline for \
+the Masters in AAA videogame development first assignment at UPC School.", TITLE);
+
+			ImGui::End();
+		}
+	}
+
+	if (propertiesOpened)
+	{
+		if (ImGui::Begin("Properties", &propertiesOpened, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			if (App->renderer->AnyModelLoaded())
+			{
+				Model* model = App->renderer->GetModel(0);
+				ImGui::Text("TRANSFORMATION");
+				ImGui::Dummy(ImVec2(0.0f, 5.0f));
+				ImGui::TextWrapped("At the moment, no transformations are applied to any loaded model.");
+				
+				ImGui::Separator();
+				
+				ImGui::Text("GEOMETRY");
+				ImGui::Dummy(ImVec2(0.0f, 5.0f));
+				ImGui::Text("Number of vertices: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", model->GetNumVertices());
+				ImGui::Text("Number of triangles: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", model->GetNumTriangles());
+
+				ImGui::Separator();
+				
+				ImGui::Text("TEXTURE");
+				ImGui::Dummy(ImVec2(0.0f, 5.0f));
+				ImGui::Text("Height: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", App->textures->GetHeight());
+				ImGui::Text("Width: "); ImGui::SameLine();
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i", App->textures->GetWidth());
+			}
+
+			else ImGui::Text("There's no model loaded in scene.");
+
+			ImGui::End();
+		}
+	}
+
+	return status;
 }
 
 update_status ModuleEditor::PostUpdate()

@@ -4,6 +4,7 @@
 
 #include <assimp/mesh.h>
 #include <MathGeoLib/src/Math/float3.h>
+#include <MathGeoLib/src/Math/float4x4.h>
 
 class Mesh
 {
@@ -18,6 +19,7 @@ public:
 
 	vec* GetVertices() const;
 	unsigned GetNumVertices() const;
+	unsigned GetNumTriangles() const;
 	
 private:
 	unsigned vbo;
@@ -27,6 +29,8 @@ private:
 	unsigned materialIndex;
 	unsigned numVertices;
 	unsigned numIndexes;
+
+	float4x4 modelTransform = float4x4::identity;
 
 	vec* vertices;
 };

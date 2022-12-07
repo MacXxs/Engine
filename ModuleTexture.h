@@ -16,7 +16,13 @@ public:
 
 	GLuint Load(const char* fileName, const std::string filePath);
 
+	int GetWidth() const;
+	int GetHeight() const;
+
 public:
 	GLuint texture;
+
+private:
+	int width, height;
 };
 

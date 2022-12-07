@@ -8,13 +8,13 @@
 
 Mesh::Mesh(const aiMesh* mesh)
 {
-	ENGINE_LOG("--- Loading mesh ---", mesh->mName);
+	ENGINE_LOG("--- Loading mesh ---");
+
 	LoadVBO(mesh);
 	LoadEBO(mesh);
 	CreateVAO();
 
 	this->materialIndex = mesh->mMaterialIndex;
-	
 	this->vertices = new vec[mesh->mNumVertices];
 
 	for (int i = 0; i < mesh->mNumVertices; ++i)
@@ -77,9 +77,9 @@ void Mesh::LoadEBO(const aiMesh* mesh)
 	}
 
 	glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-	numIndexes = mesh->mNumFaces * 3;
+	this->numIndexes = mesh->mNumFaces * 3;
 
-	ENGINE_LOG("Generated EBO %i with %i indexes", ebo, numIndexes);
+	ENGINE_LOG("Generated EBO %i with %i indexes", ebo, this->numIndexes);
 }
 
 void Mesh::CreateVAO()
@@ -104,7 +104,7 @@ void Mesh::Draw(const std::vector<unsigned>& model_textures)
 	unsigned program = App->program->program;
 	const float4x4& view = App->engineCamera->GetViewMatrix();
 	const float4x4& proj = App->engineCamera->GetProjectionMatrix();
-	float4x4 model = float4x4::identity;
+	float4x4 model = this->modelTransform;
 
 	glUseProgram(program);
 
@@ -129,4 +129,9 @@ vec* Mesh::GetVertices() const
 unsigned Mesh::GetNumVertices() const
 {
 	return this->numVertices;
+}
+
+unsigned Mesh::GetNumTriangles() const
+{
+	return this->numIndexes / 3;
 }

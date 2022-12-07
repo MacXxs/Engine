@@ -53,7 +53,6 @@ int main(int argc, char ** argv)
 			else
 			{
 				state = MAIN_START;
-				ENGINE_LOG("Application Update --------------");
 			}
 
 			break;
@@ -69,7 +68,6 @@ int main(int argc, char ** argv)
 			else
 			{
 				state = MAIN_UPDATE;
-				ENGINE_LOG("Application Update --------------");
 			}
 
 			break;
