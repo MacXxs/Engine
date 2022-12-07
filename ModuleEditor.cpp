@@ -213,7 +213,7 @@ update_status ModuleEditor::Update()
 				ImGui::Separator();
 
 				ImGui::Text("CPUs: "); ImGui::SameLine();
-				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "CPUs: %i (Cache: %iKB)",
+				ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "%i (Cache: %iKB)",
 					App->renderer->GetCPUCount(), App->renderer->GetCacheLineSize());
 
 				ImGui::Text("System RAM: "); ImGui::SameLine();
@@ -269,7 +269,10 @@ update_status ModuleEditor::Update()
 				ImGui::TextUnformatted(&line[0]);
 			}
 
+			if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+				ImGui::SetScrollHereY(1.0f);
 		}
+
 		ImGui::End();
 	}
 
