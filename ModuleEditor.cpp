@@ -44,8 +44,6 @@ bool ModuleEditor::Start()
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(GLSL_VERSION);
 
-	ImGui::SetWindowSize("Console log", ImVec2(600, 250));
-
 	return true;
 }
 
@@ -284,10 +282,12 @@ update_status ModuleEditor::Update()
 
 	if (consoleOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10, window.second - 270), ImGuiCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(10, window.second - 280), ImGuiCond_Once);
 
 		if (ImGui::Begin("Console log", &consoleOpened))
 		{
+			ImGui::SetWindowSize("Console log", ImVec2(900, 250), ImGuiCond_Once);
+
 			while (!engineLog->logLines.empty())
 			{
 				lines.push_back(engineLog->logLines.front().c_str());
