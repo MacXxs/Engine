@@ -16,7 +16,7 @@ enum update_status
 
 // Application -------------
 #define TITLE "Chrysalis Engine"
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 // Configuration -----------
 #define MAX_FRAMERATE 80 
