@@ -86,6 +86,11 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 			result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
 				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
 		}
+		else
+		{
+			result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
+				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+		}
 	}
 	else
 	{
