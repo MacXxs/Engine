@@ -67,16 +67,16 @@ update_status ModuleEngineCamera::Update()
 	}
 
 	if (App->renderer->AnyModelLoaded() && App->input->GetKey(SDL_SCANCODE_F) != KeyState::IDLE)
-		Focus(App->renderer->GetModel(0)->GetAABB());
+		Focus(App->renderer->GetModel(0)->GetOBB());
 
 	if (App->renderer->AnyModelLoaded() &&
 		App->input->GetKey(SDL_SCANCODE_LALT) != KeyState::IDLE &&
 		App->input->GetMouseButton(SDL_BUTTON_LEFT) != KeyState::IDLE)
 	{
-		const AABB& aabb = App->renderer->GetModel(0)->GetAABB();
+		OBB&& obb = App->renderer->GetModel(0)->GetOBB();
 
-		SetLookAt(aabb.CenterPoint());
-		Orbit(aabb);
+		SetLookAt(obb.CenterPoint());
+		Orbit(obb);
 	}
 	
 	KeyboardRotate();
@@ -216,9 +216,11 @@ void ModuleEngineCamera::Zoom()
 		SetHFOV(math::DegToRad(newHFOV));
 }
 
-void ModuleEngineCamera::Focus(const AABB &aabb)
+void ModuleEngineCamera::Focus(const OBB &obb)
 {
-	float3 point = aabb.CenterPoint();
+	float3 point = obb.CenterPoint();
+
+	AABB&& aabb = obb.MinimalEnclosingAABB();
 
 	float xDistance = aabb.MaxX() - aabb.MinX();
 	float yDistance = aabb.MaxY() - aabb.MinY();
@@ -232,9 +234,9 @@ void ModuleEngineCamera::Focus(const AABB &aabb)
 	frustum.SetPos(position);
 }
 
-void ModuleEngineCamera::Orbit(const AABB& aabb)
+void ModuleEngineCamera::Orbit(const OBB& obb)
 {
-	float distance = aabb.CenterPoint().Distance(position);
+	float distance = obb.CenterPoint().Distance(position);
 
 	vec oldPosition = position + frustum.Front().Normalized() * distance;
 

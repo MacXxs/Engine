@@ -8,6 +8,8 @@
 
 #include "Mesh.h"
 
+#include <MathGeoLib/src/Math/Quat.h>
+
 #include <assimp/scene.h>       
 #include <assimp/postprocess.h> 
 #include <assimp/cimport.h>
@@ -19,11 +21,15 @@ void myCallback(const char* msg, char* userData) {
 
 Model::Model()
 {
-	aabb.SetNegativeInfinity();
-
 	struct aiLogStream stream;
 	stream.callback = myCallback;
 	aiAttachLogStream(&stream);
+
+	aabb.SetNegativeInfinity();
+	
+	translation = float3(0.0f, 0.0f, 0.0f);
+	rotation = float3(0.0f, 0.0f, 0.0f);
+	scale = float3(1.0f, 1.0f, 1.0f);
 }
 
 Model::~Model()
@@ -94,13 +100,8 @@ void Model::Draw()
 {
 	for (int i = 0; i < meshes.size(); ++i)
 	{
-		meshes[i]->Draw(textures);
+		meshes[i]->Draw(textures, translation, GetRotationF4x4(), scale);
 	}
-}
-
-AABB Model::GetAABB() const
-{
-	return aabb;
 }
 
 const std::string Model::GetDirectory() const
@@ -122,6 +123,17 @@ const std::string Model::GetDirectory() const
 	return directory;
 }
 
+AABB Model::GetAABB() const
+{
+	return aabb;
+}
+
+OBB Model::GetOBB() const
+{
+	return obb;
+}
+
+
 int Model::GetNumVertices() const
 {
 	int count = 0;
@@ -134,11 +146,6 @@ int Model::GetNumVertices() const
 	return count;
 }
 
-unsigned Model::GetTextureId() const
-{
-	return this->textures[0];
-}
-
 int Model::GetNumTriangles() const
 {
 	int count = 0;
@@ -149,4 +156,56 @@ int Model::GetNumTriangles() const
 	}
 
 	return count;
+}
+
+unsigned Model::GetTextureId() const
+{
+	return textures[0];
+}
+
+float3 Model::GetTranslation() const
+{
+	return translation;
+}
+
+float3 Model::GetScale() const
+{
+	return scale;
+}
+
+float3 Model::GetRotationF3() const
+{
+	return rotation;
+}
+
+float4x4 Model::GetRotationF4x4() const
+{
+	Quat&& rotation = Quat(
+		Quat(float3::unitX, DegToRad(this->rotation.x)) *
+		Quat(float3::unitY, DegToRad(this->rotation.y)) *
+		Quat(float3::unitZ, DegToRad(this->rotation.z))
+	);
+
+	return float4x4::FromQuat(rotation);
+}
+
+void Model::SetScale(const float3& scale)
+{
+	this->scale = scale;
+
+	obb = aabb.Transform(float4x4::FromTRS(translation, GetRotationF4x4(), scale));
+}
+
+void Model::SetRotation(const float3 &rotation)
+{
+	this->rotation = rotation;
+
+	obb = aabb.Transform(float4x4::FromTRS(translation, GetRotationF4x4(), scale));
+}
+
+void Model::SetTranslation(const float3 &translation)
+{
+	this->translation = translation;
+
+	obb = aabb.Transform(float4x4::FromTRS(translation, GetRotationF4x4(), scale));
 }

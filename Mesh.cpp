@@ -101,12 +101,14 @@ void Mesh::CreateVAO()
 	ENGINE_LOG("Generated VAO %i", vao);
 }
 
-void Mesh::Draw(const std::vector<unsigned>& model_textures)
+void Mesh::Draw(const std::vector<unsigned>& model_textures,
+	const float3 &translation, const float4x4&rotation, const float3 &scale)
 {
 	unsigned program = App->program->program;
 	const float4x4& view = App->engineCamera->GetViewMatrix();
 	const float4x4& proj = App->engineCamera->GetProjectionMatrix();
-	float4x4 model = this->modelTransform;
+	float4x4 model = float4x4::FromTRS(translation, rotation, scale);
+	//float4x4 model = this->modelTransform;
 
 	glUseProgram(program);
 

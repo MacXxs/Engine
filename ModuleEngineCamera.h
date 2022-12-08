@@ -39,8 +39,8 @@ public:
 	void Run();
 	void Walk();
 	void Zoom();
-	void Focus(const AABB& aabb);
-	void Orbit(const AABB& aabb);
+	void Focus(const OBB& obb);
+	void Orbit(const OBB& obb);
 
 	void SetHFOV(float fov);
 	void SetVFOV(float fov);
