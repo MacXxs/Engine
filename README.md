@@ -1,7 +1,7 @@
 # Chrysalis Engine :space_invader:
 
 Game engine made in C++ by [Miquel Prieto Moliné](https://github.com/MacXxs) for the Masters' in AAA videogame development first assignment.</br>
-You can check the repo [here](https://github.com/MacXxs/LostSpace) </br>
+You can check the repo [here](https://github.com/MacXxs/Engine) </br>
 
 ## How to use
 ### Camera Controls
