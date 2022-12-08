@@ -28,3 +28,4 @@ To load a model simply drag and drop it on the scene. Any previous loaded model 
 
 ## Additional Functionality
 - The engine console shows every log done calling ENGINE_LOG, not just the assimp library log messages.
+- The ability to modify the translation, rotation and scale of the loaded model through the transformation section on the properties window of the editor. The engine camera focuses and orbits around the OBB, so the camera adapts to any applied transformation.
