@@ -15,7 +15,7 @@ You can check the repo [here](https://github.com/MacXxs/LostSpace) </br>
 ### Laoding a Model
 To load a model simply drag and drop it on the scene. Any previous loaded model will be deleted.
 
-## Menu Layout
+### Menu Layout
 - Window
   - Configuration
   - Camera
