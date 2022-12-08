@@ -39,7 +39,6 @@ public:
 	void SetRotation(const float3 &roation);
 	void SetScale(const float3& scale);
 
-
 private:
 	const char* path;
 

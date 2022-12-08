@@ -94,6 +94,8 @@ void Model::LoadMeshes(const aiScene* scene)
 
 		meshes.push_back(mesh);
 	}
+
+	obb = aabb.Transform(float4x4::FromTRS(translation, GetRotationF4x4(), scale));
 }
 
 void Model::Draw()
