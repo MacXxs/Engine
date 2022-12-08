@@ -17,4 +17,11 @@ To load a model simply drag and drop it on the scene. Any previous loaded model 
 
 ## Menu Layout
 - Window
-  - 
+  - Configuration
+  - Camera
+- Properties
+- Console
+- Help
+  - Github page
+  - About
+- Quit
