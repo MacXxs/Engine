@@ -25,3 +25,6 @@ To load a model simply drag and drop it on the scene. Any previous loaded model 
   - Github page
   - About
 - Quit
+
+## Additional Functionality
+- The engine console shows every log done calling ENGINE_LOG, not just the assimp library log messages.
