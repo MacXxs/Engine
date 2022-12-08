@@ -148,9 +148,9 @@ void ModuleWindow::SetWindowType(bool fullscreen, bool borderless,
 		SDL_SetWindowFullscreen(this->window, 0);
 
 	if (this->borderless)
-		SDL_SetWindowBordered(this->window, SDL_TRUE);
-	else
 		SDL_SetWindowBordered(this->window, SDL_FALSE);
+	else
+		SDL_SetWindowBordered(this->window, SDL_TRUE);
 
 	if (this->resizable)
 		SDL_SetWindowResizable(this->window, SDL_TRUE);

@@ -13,9 +13,17 @@
 #include <assimp/cimport.h>
 #include <assimp/types.h>
 
+void myCallback(const char* msg, char* userData) {
+	ENGINE_LOG("[assimp]%s", msg);
+}
+
 Model::Model()
 {
 	aabb.SetNegativeInfinity();
+
+	struct aiLogStream stream;
+	stream.callback = myCallback;
+	aiAttachLogStream(&stream);
 }
 
 Model::~Model()

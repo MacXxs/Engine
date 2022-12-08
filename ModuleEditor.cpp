@@ -43,7 +43,7 @@ bool ModuleEditor::Start()
 	ImGui_ImplSDL2_InitForOpenGL(App->window->window, App->renderer->context);
 	ImGui_ImplOpenGL3_Init(GLSL_VERSION);
 
-	ImGui::SetWindowSize("Console log", ImVec2(500, 250));
+	ImGui::SetWindowSize("Console log", ImVec2(600, 250));
 
 	return true;
 }

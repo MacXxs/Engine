@@ -70,6 +70,7 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 
 	DirectX::TexMetadata md;
 	DirectX::ScratchImage* img = new DirectX::ScratchImage;
+	DirectX::ScratchImage* flippedImg = new DirectX::ScratchImage;
 
 	HRESULT result = DirectX::LoadFromDDSFile(path, DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &md, *img);
 
@@ -80,13 +81,16 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 		if (FAILED(result))
 		{
 			result = DirectX::LoadFromWICFile(path, DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &md, *img);
+
+			result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
+				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
 		}
 	}
-
-	DirectX::ScratchImage* flippedImg = new DirectX::ScratchImage;
-
-	result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
-		DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+	else
+	{
+		result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
+			DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+	}
 
 	glGenTextures(1, &texture);
 
@@ -97,8 +101,8 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	GLint internalFormat;
-	GLenum format, type;
+	GLint internalFormat = GL_RGBA8;
+	GLenum format = GL_RGBA, type = GL_UNSIGNED_BYTE;
 
 	switch (flippedImg->GetMetadata().format)
 	{
