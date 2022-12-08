@@ -104,7 +104,7 @@ update_status ModuleEditor::Update()
 
 	if (cameraOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once || windowResized);
 
 		if (ImGui::Begin("Camera Settings", &cameraOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
@@ -154,7 +154,7 @@ update_status ModuleEditor::Update()
 
 	if (configOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(window.first - 340, 30), ImGuiCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(window.first - 340, 30), ImGuiCond_Once || windowResized);
 
 		if (ImGui::Begin("Configuration", &configOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
@@ -282,7 +282,7 @@ update_status ModuleEditor::Update()
 
 	if (consoleOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10, window.second - 280), ImGuiCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(10, window.second - 280), ImGuiCond_Once || windowResized);
 
 		if (ImGui::Begin("Console log", &consoleOpened))
 		{
@@ -308,7 +308,7 @@ update_status ModuleEditor::Update()
 
 	if (aboutOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(window.first / 2 - 150, 30), ImGuiCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(window.first / 2 - 150, 30), ImGuiCond_Once || windowResized);
 
 		if (ImGui::Begin("About", &aboutOpened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 		{
@@ -327,7 +327,7 @@ development at UPC School.");
 
 	if (propertiesOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10, window.second / 3), ImGuiCond_Once);
+		ImGui::SetNextWindowPos(ImVec2(10, window.second / 3), ImGuiCond_Once || windowResized);
 
 		if (ImGui::Begin("Properties", &propertiesOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
@@ -482,5 +482,12 @@ update_status ModuleEditor::PostUpdate()
 	ImGui::RenderPlatformWindowsDefault();
 	SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
 
+	if (windowResized) windowResized = false;
+
 	return UPDATE_CONTINUE;
+}
+
+void ModuleEditor::Resized()
+{
+	windowResized = true;
 }

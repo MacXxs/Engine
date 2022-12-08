@@ -15,7 +15,11 @@ public:
 	update_status Update() override;
 	update_status PostUpdate() override;
 
+	void Resized();
+
 private:
 	std::vector<std::string> lines;
+
+	bool windowResized = false;
 };
 

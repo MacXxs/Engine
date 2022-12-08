@@ -4,6 +4,7 @@
 #include "ModuleWindow.h"
 #include "ModuleEngineCamera.h"
 #include "ModuleProgram.h"
+#include "ModuleEditor.h"
 
 #include "Model.h"
 
@@ -201,6 +202,7 @@ bool ModuleRender::CleanUp()
 void ModuleRender::WindowResized(unsigned width, unsigned height)
 {
 	App->engineCamera->SetAspectRatio(float(width) / height);
+	App->editor->Resized();
 }
 
 void ModuleRender::SetBackgroundColor(float4 color)
