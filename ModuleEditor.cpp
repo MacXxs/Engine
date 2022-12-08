@@ -16,11 +16,11 @@
 #include <shellapi.h>
 #include <limits>
 
-static bool cameraOpened = false;
-static bool configOpened = false;
-static bool consoleOpened = false;
+static bool cameraOpened = true;
+static bool configOpened = true;
+static bool consoleOpened = true;
 static bool aboutOpened = false;
-static bool propertiesOpened = false;
+static bool propertiesOpened = true;
 
 ModuleEditor::ModuleEditor() {}
 
@@ -71,6 +71,8 @@ update_status ModuleEditor::Update()
 {
 	update_status status = UPDATE_CONTINUE;
 
+	std::pair<int, int>&& window = App->window->GetWindowSize();
+
 	//ImGui::ShowDemoWindow();
 
 	if (ImGui::BeginMainMenuBar())
@@ -104,6 +106,8 @@ update_status ModuleEditor::Update()
 
 	if (cameraOpened)
 	{
+		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once);
+
 		if (ImGui::Begin("Camera Settings", &cameraOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			int hfov = App->engineCamera->GetHFOV();
@@ -152,6 +156,8 @@ update_status ModuleEditor::Update()
 
 	if (configOpened)
 	{
+		ImGui::SetNextWindowPos(ImVec2(window.first - 340, 30), ImGuiCond_Once);
+
 		if (ImGui::Begin("Configuration", &configOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			if (ImGui::CollapsingHeader("Application", ImGuiTreeNodeFlags_DefaultOpen))
@@ -278,6 +284,8 @@ update_status ModuleEditor::Update()
 
 	if (consoleOpened)
 	{
+		ImGui::SetNextWindowPos(ImVec2(10, window.second - 270), ImGuiCond_Once);
+
 		if (ImGui::Begin("Console log", &consoleOpened))
 		{
 			while (!engineLog->logLines.empty())
@@ -300,6 +308,8 @@ update_status ModuleEditor::Update()
 
 	if (aboutOpened)
 	{
+		ImGui::SetNextWindowPos(ImVec2(window.first / 2 - 150, 30), ImGuiCond_Once);
+
 		if (ImGui::Begin("About", &aboutOpened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
 		{
 			ImGui::SetWindowSize("About", ImVec2(300, 200));
@@ -317,6 +327,8 @@ development at UPC School.");
 
 	if (propertiesOpened)
 	{
+		ImGui::SetNextWindowPos(ImVec2(10, window.second / 3), ImGuiCond_Once);
+
 		if (ImGui::Begin("Properties", &propertiesOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			if (App->renderer->AnyModelLoaded())
