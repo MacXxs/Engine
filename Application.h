@@ -1,9 +1,11 @@
 #pragma once
 
-#include<list>
-
 #include "Globals.h"
 #include "Module.h"
+#include "Timer.h"
+
+#include<list>
+
 
 class ModuleRender;
 class ModuleWindow;
@@ -49,10 +51,12 @@ public:
 	std::vector<float> fpsLog;
 	std::vector<float> msLog;
 
+	Timer* appTimer;
+
 private:
 	std::list<Module*> modules;
 
-	int maxFramerate = MAX_FRAMERATE;
+	int maxFramerate;
 };
 
 extern Application* App;

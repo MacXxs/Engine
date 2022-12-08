@@ -67,6 +67,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="EngineLog.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="EngineLog.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\MathGeoLib\src\Geometry\KDTree.inl" />

@@ -3,8 +3,6 @@
 #include "ModuleRender.h"
 #include "Globals.h"
 
-#include "SDL/include/SDL.h"
-
 #pragma comment( lib, "SDL/lib/x64/SDL2.lib" )
 #pragma comment( lib, "SDL/lib/x64/SDL2main.lib" )
 
@@ -26,14 +24,8 @@ int main(int argc, char ** argv)
 	int main_return = EXIT_FAILURE;
 	main_states state = MAIN_CREATION;
 
-	Uint32 oldTick = SDL_GetTicks();
-	Uint32 newTick;
-
 	while (state != MAIN_EXIT)
 	{
-		newTick = SDL_GetTicks();
-		oldTick = newTick;
-
 		switch (state)
 		{
 		case MAIN_CREATION:
@@ -101,18 +93,6 @@ int main(int argc, char ** argv)
 
 			break;
 		}
-
-		// Capping framerate and storing it
-		float dt = (float)(SDL_GetTicks() - oldTick) / 1000.0f;
-		
-		if (dt < (1000.0f / App->GetMaxFrameRate()))
-		{
-			SDL_Delay((1000.0f / App->GetMaxFrameRate()) - dt);
-		}
-		
-		App->deltaTime = (float)(SDL_GetTicks() - oldTick) / 1000.0f;
-		App->fps = 1 / App->deltaTime;
-		App->AddFrame(App->fps, App->deltaTime);
 	}
 
 	delete App;

@@ -27,6 +27,9 @@ Application::Application()
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(textures = new ModuleTexture());
 	modules.push_back(engineCamera = new ModuleEngineCamera());
+
+	appTimer = new Timer;
+	maxFramerate = MAX_FRAMERATE;
 }
 
 Application::~Application()
@@ -51,6 +54,8 @@ bool Application::Start()
 {
 	bool ret = true;
 
+	appTimer->Start();
+
 	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
 		ret = (*it)->Start();
 
@@ -59,6 +64,8 @@ bool Application::Start()
 
 update_status Application::Update()
 {
+	float ms = appTimer->Read();
+
 	update_status ret = UPDATE_CONTINUE;
 
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
@@ -70,6 +77,17 @@ update_status Application::Update()
 	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
 		ret = (*it)->PostUpdate();
 
+	float dt = (appTimer->Read() - ms) / 1000.0f;
+
+	if (dt < 1000.0f / GetMaxFrameRate())
+	{
+		SDL_Delay(1000.0f / GetMaxFrameRate() - dt);
+	}
+
+	this->deltaTime = (appTimer->Read() - ms) / 1000.0f;
+	this->fps = 1 / this->deltaTime;
+	this->AddFrame(App->fps, App->deltaTime);
+
 	return ret;
 }
 
@@ -79,6 +97,8 @@ bool Application::CleanUp()
 
 	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
 		ret = (*it)->CleanUp();
+
+	delete appTimer;
 
 	return ret;
 }
