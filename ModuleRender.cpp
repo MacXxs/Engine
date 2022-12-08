@@ -130,7 +130,7 @@ bool ModuleRender::Start()
 	App->program->CreateProgram(vertexShader, fragmentShader);
 
 	Model* bakerHouse = new Model;
-	bakerHouse->Load("Assets/models/BakerHouse.fbx");
+	bakerHouse->Load("C:\\Users\\Miquel\\Downloads\\Shiba\\shiba.fbx");
 
 	models.push_back(bakerHouse);
 

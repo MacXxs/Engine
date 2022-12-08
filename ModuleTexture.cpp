@@ -71,6 +71,7 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 	DirectX::TexMetadata md;
 	DirectX::ScratchImage* img = new DirectX::ScratchImage;
 	DirectX::ScratchImage* flippedImg = new DirectX::ScratchImage;
+	DirectX::ScratchImage* dcmprsdImg = new DirectX::ScratchImage;
 
 	HRESULT result = DirectX::LoadFromDDSFile(path, DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &md, *img);
 
@@ -88,8 +89,11 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 	}
 	else
 	{
-		result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
-			DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+		result = DirectX::Decompress(img->GetImages(), img->GetImageCount(),
+			md, DXGI_FORMAT_UNKNOWN, *dcmprsdImg);
+
+		result = DirectX::FlipRotate(dcmprsdImg->GetImages(), dcmprsdImg->GetImageCount(), 
+			dcmprsdImg->GetMetadata(), DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
 	}
 
 	glGenTextures(1, &texture);
@@ -101,8 +105,8 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	GLint internalFormat = GL_RGBA8;
-	GLenum format = GL_RGBA, type = GL_UNSIGNED_BYTE;
+	GLint internalFormat;
+	GLenum format, type;
 
 	switch (flippedImg->GetMetadata().format)
 	{
@@ -123,18 +127,29 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
 		format = GL_BGR;
 		type = GL_UNSIGNED_BYTE;
 		break;
+	case DXGI_FORMAT_BC1_UNORM:
+		internalFormat = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+		format = GL_RGBA;
+		type = GL_UNSIGNED_BYTE;
+		break;
+
 	default:
 		assert(false && "Unsupported format");
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,flippedImg->GetMetadata().width, 
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, flippedImg->GetMetadata().width,
 		flippedImg->GetMetadata().height, 0, format, type, flippedImg->GetPixels());
+
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	this->width = flippedImg->GetMetadata().width;
-	this->height = flippedImg->GetMetadata().height;
+	this->width = img->GetMetadata().width;
+	this->height = img->GetMetadata().height;
 
 	ENGINE_LOG("Texture %i loaded", texture);
+
+	delete img;
+	delete dcmprsdImg;
+	delete flippedImg;
 
 	return texture;
 }
