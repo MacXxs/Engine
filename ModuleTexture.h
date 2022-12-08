@@ -20,6 +20,7 @@ public:
 	int GetHeight() const;
 
 private:
-	int width, height;
+	int width;
+	int height;
 };
 

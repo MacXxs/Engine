@@ -107,7 +107,7 @@ void Mesh::Draw(const std::vector<unsigned>& model_textures,
 	unsigned program = App->program->program;
 	const float4x4& view = App->engineCamera->GetViewMatrix();
 	const float4x4& proj = App->engineCamera->GetProjectionMatrix();
-	float4x4 model = float4x4::FromTRS(translation, rotation, scale);
+	const float4x4& model = float4x4::FromTRS(translation, rotation, scale);
 	//float4x4 model = this->modelTransform;
 
 	glUseProgram(program);

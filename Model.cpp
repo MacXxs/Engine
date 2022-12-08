@@ -43,6 +43,13 @@ Model::~Model()
 	}
 
 	meshes.clear();
+
+	for (unsigned texture : textures)
+	{
+		glDeleteTextures(1, &texture);
+	}
+
+	textures.clear();
 }
 
 void Model::Load(const char* fileName)
