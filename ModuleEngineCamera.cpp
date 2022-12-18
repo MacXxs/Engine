@@ -8,6 +8,7 @@
 #include <MathGeoLib/src/Math/float3x3.h>
 #include <MathGeoLib/src/Math/Quat.h>
 #include <MathGeoLib/src/Math/MathAll.h>
+#include <MathGeoLib/src/Geometry/Sphere.h>
 
 #include <GL/glew.h>
 
@@ -221,16 +222,11 @@ void ModuleEngineCamera::Zoom()
 
 void ModuleEngineCamera::Focus(const OBB &obb)
 {
-	float3 point = obb.CenterPoint();
+	math::Sphere minSphere = obb.MinimalEnclosingSphere();
 
-	AABB&& aabb = obb.MinimalEnclosingAABB();
+	float3 point = minSphere.Centroid();
 
-	float xDistance = aabb.MaxX() - aabb.MinX();
-	float yDistance = aabb.MaxY() - aabb.MinY();
-	float zDistance = aabb.MaxZ() - aabb.MinZ();
-	float maxDistance = Max(Max(xDistance, yDistance), zDistance);
-
-	position = point + float3::unitZ * maxDistance * 2.f;
+	position = point - frustum.Front().Normalized() * minSphere.Diameter();
 
 	SetLookAt(point);
 
