@@ -50,6 +50,9 @@ bool ModuleEngineCamera::Start()
 
 update_status ModuleEngineCamera::Update()
 {
+	projectionMatrix = frustum.ProjectionMatrix();
+	viewMatrix = frustum.ViewMatrix();
+
 	if (App->input->GetKey(SDL_SCANCODE_LSHIFT) != KeyState::IDLE)
 		Run();
 	else
@@ -73,7 +76,7 @@ update_status ModuleEngineCamera::Update()
 		App->input->GetKey(SDL_SCANCODE_LALT) != KeyState::IDLE &&
 		App->input->GetMouseButton(SDL_BUTTON_LEFT) != KeyState::IDLE)
 	{
-		OBB&& obb = App->renderer->GetModel(0)->GetOBB();
+		const OBB& obb = App->renderer->GetModel(0)->GetOBB();
 
 		SetLookAt(obb.CenterPoint());
 		Orbit(obb);
@@ -287,17 +290,17 @@ void ModuleEngineCamera::SetPlaneDistance(float zNear, float zFar)
 	frustum.SetViewPlaneDistances(zNear, zFar);
 }
 
-void ModuleEngineCamera::SetPosition(float3 position)
+void ModuleEngineCamera::SetPosition(const float3& position)
 {
 	frustum.SetPos(position);
 }
 
-void ModuleEngineCamera::SetOrientation(float3 orientation)
+void ModuleEngineCamera::SetOrientation(const float3& orientation)
 {
 	frustum.SetUp(orientation);
 }
 
-void ModuleEngineCamera::SetLookAt(float3 lookAt)
+void ModuleEngineCamera::SetLookAt(const float3& lookAt)
 {
 	float3 direction = lookAt - position;
 
@@ -318,15 +321,15 @@ void ModuleEngineCamera::SetRotationSpeed(float speed)
 	rotationSpeed = speed;
 }
 
-float4x4 ModuleEngineCamera::GetProjectionMatrix() const
+const float4x4& ModuleEngineCamera::GetProjectionMatrix() const
 {
 	//return frustum.ProjectionMatrix().Transposed(); // Needs to be transposed to use withGL
-	return frustum.ProjectionMatrix();
+	return projectionMatrix;
 }
 
-float4x4 ModuleEngineCamera::GetViewMatrix() const
+const float4x4& ModuleEngineCamera::GetViewMatrix() const
 {
-	return frustum.ViewMatrix();
+	return viewMatrix;
 }
 
 float ModuleEngineCamera::GetHFOV() const
@@ -359,7 +362,7 @@ float ModuleEngineCamera::GetRotationSpeed() const
 	return rotationSpeed;
 }
 
-float ModuleEngineCamera::GetDistance(float3 point) const
+float ModuleEngineCamera::GetDistance(const float3& point) const
 {
 	return frustum.Pos().Distance(point);
 }

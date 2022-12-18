@@ -14,6 +14,8 @@
 #include <assimp/postprocess.h> 
 #include <assimp/cimport.h>
 #include <assimp/types.h>
+#include <assimp/material.h>
+
 
 void myCallback(const char* msg, char* userData) {
 	ENGINE_LOG("[assimp]%s", msg);
@@ -132,12 +134,12 @@ const std::string Model::GetDirectory() const
 	return directory;
 }
 
-AABB Model::GetAABB() const
+const AABB& Model::GetAABB() const
 {
 	return aabb;
 }
 
-OBB Model::GetOBB() const
+const OBB& Model::GetOBB() const
 {
 	return obb;
 }
@@ -167,27 +169,28 @@ int Model::GetNumTriangles() const
 	return count;
 }
 
-unsigned Model::GetTextureId() const
+unsigned Model::GetTextureId(unsigned idx) const
 {
-	return textures[0];
+	if (!textures.empty())
+		return textures[idx];
 }
 
-float3 Model::GetTranslation() const
+const float3& Model::GetTranslation() const
 {
 	return translation;
 }
 
-float3 Model::GetScale() const
+const float3& Model::GetScale() const
 {
 	return scale;
 }
 
-float3 Model::GetRotationF3() const
+const float3& Model::GetRotationF3() const
 {
 	return rotation;
 }
 
-float4x4 Model::GetRotationF4x4() const
+const float4x4& Model::GetRotationF4x4() const
 {
 	Quat&& rotation = Quat(
 		Quat(float3::unitX, DegToRad(this->rotation.x)) *

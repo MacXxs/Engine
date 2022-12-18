@@ -57,6 +57,7 @@ ModuleRender::ModuleRender()
 // Destructor
 ModuleRender::~ModuleRender()
 {
+	delete context;
 }
 
 // Called before render is available
@@ -122,11 +123,14 @@ bool ModuleRender::Start()
 {
 	ENGINE_LOG("--------- Render Start ----------");
 
-	char* vertexSource = App->program->LoadShaderSource("Shaders/default_vertex.glsl");
-	char* fragmentSource = App->program->LoadShaderSource("Shaders/default_fragment.glsl");
+	const char* vertexSource = App->program->LoadShaderSource("Shaders/default_vertex.glsl");
+	const char* fragmentSource = App->program->LoadShaderSource("Shaders/default_fragment.glsl");
 
 	unsigned vertexShader = App->program->CompileShader(GL_VERTEX_SHADER, vertexSource);
 	unsigned fragmentShader = App->program->CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+
+	delete vertexSource;
+	delete fragmentSource;
 
 	App->program->CreateProgram(vertexShader, fragmentShader);
 

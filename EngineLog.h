@@ -10,6 +10,14 @@
 class EngineLog
 {
 public:
+
+	EngineLog() {};
+
+	~EngineLog()
+	{
+		logLines = {};
+	}
+
 	void Log(const char file[], int line, const char* format, ...);
 
 public:

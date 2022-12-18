@@ -16,7 +16,7 @@ enum main_states
 	MAIN_EXIT
 };
 
-Application* App = NULL;
+Application* App = nullptr;
 EngineLog* engineLog = new EngineLog();
 
 int main(int argc, char ** argv)
@@ -95,7 +95,8 @@ int main(int argc, char ** argv)
 		}
 	}
 
-	delete App;
 	ENGINE_LOG("Bye :)\n");
+	delete App;
+	delete engineLog;
 	return main_return;
 }

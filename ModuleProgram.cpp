@@ -4,6 +4,13 @@
 ModuleProgram::ModuleProgram(){}
 ModuleProgram::~ModuleProgram(){}
 
+bool ModuleProgram::CleanUp()
+{
+	glDeleteProgram(program);
+
+	return true;
+}
+
 void ModuleProgram::CreateProgram(unsigned vtx_shader, unsigned frg_shader)
 {
 	this->program = glCreateProgram();

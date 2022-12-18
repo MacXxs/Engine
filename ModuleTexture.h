@@ -14,7 +14,7 @@ public:
 
 	update_status Update();
 
-	GLuint Load(const char* fileName, const std::string filePath);
+	GLuint Load(const char* fileName, const std::string& filePath);
 
 	int GetWidth() const;
 	int GetHeight() const;

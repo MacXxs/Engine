@@ -33,7 +33,7 @@ update_status ModuleTexture::Update()
 	return UPDATE_CONTINUE;
 }
 
-GLuint ModuleTexture::Load(const char* fileName, const std::string filePath)
+GLuint ModuleTexture::Load(const char* fileName, const std::string& filePath)
 {
 	ENGINE_LOG("---- Loading texture ----");
 

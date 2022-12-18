@@ -46,14 +46,14 @@ public:
 	void SetVFOV(float fov);
 	void SetAspectRatio(float aspect);
 	void SetPlaneDistance(float zNear, float zFar);
-	void SetPosition(float3 position);
-	void SetOrientation(float3 orientation);
-	void SetLookAt(float3 lookAt);
+	void SetPosition(const float3& position);
+	void SetOrientation(const float3& orientation);
+	void SetLookAt(const float3& lookAt);
 	void SetMoveSpeed(float speed);
 	void SetRotationSpeed(float speed);
 
-	float4x4 GetProjectionMatrix() const;
-	float4x4 GetViewMatrix() const;
+	const float4x4& GetProjectionMatrix() const;
+	const float4x4& GetViewMatrix() const;
 
 	float GetHFOV() const;
 	float GetVFOV() const;
@@ -61,11 +61,13 @@ public:
 	float GetZFar() const;
 	float GetMoveSpeed() const;
 	float GetRotationSpeed() const;
-	float GetDistance(float3 point) const;
+	float GetDistance(const float3& point) const;
 
 private:
 	Frustum frustum;
 	float3 position;
+	float4x4 projectionMatrix;
+	float4x4 viewMatrix;
 	float aspectRatio;
 	float acceleration;
 	float moveSpeed;

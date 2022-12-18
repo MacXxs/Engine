@@ -4,9 +4,6 @@
 #include "Module.h"
 #include "Timer.h"
 
-#include<list>
-
-
 class ModuleRender;
 class ModuleWindow;
 class ModuleInput;
@@ -54,7 +51,7 @@ public:
 	Timer* appTimer;
 
 private:
-	std::list<Module*> modules;
+	std::vector<Module*> modules;
 
 	int maxFramerate;
 };

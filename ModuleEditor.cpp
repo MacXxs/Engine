@@ -53,6 +53,8 @@ bool ModuleEditor::CleanUp()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
 
+	lines.clear();
+
 	return true;
 }
 
@@ -292,10 +294,13 @@ update_status ModuleEditor::Update()
 		{
 			ImGui::SetWindowSize("Console log", ImVec2(900, 250), ImGuiCond_Once);
 
+			std::string logInfo = "";
 			while (!engineLog->logLines.empty())
 			{
-				lines.push_back(engineLog->logLines.front().c_str());
-					engineLog->logLines.pop();
+				logInfo = engineLog->logLines.front().c_str();
+				lines.push_back(logInfo);
+
+				engineLog->logLines.pop();
 			}
 
 			for (std::string line : lines)
@@ -468,7 +473,7 @@ development at UPC School.");
 				
 					ImGui::EndTable();
 				}
-				ImGui::Image((void*)model->GetTextureId(), ImVec2(100.0f, 100.0f));
+				ImGui::Image((void*)model->GetTextureId(0), ImVec2(100.0f, 100.0f));
 			}
 
 			else ImGui::Text("There's no model loaded in scene.");

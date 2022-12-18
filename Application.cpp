@@ -34,18 +34,19 @@ Application::Application()
 
 Application::~Application()
 {
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end(); ++it)
-    {
-        delete *it;
-    }
+	for(int i = 0; i < modules.size(); ++i)
+        delete modules[i];
+
+	fpsLog.clear();
+	msLog.clear();
 }
 
 bool Application::Init()
 {
 	bool ret = true;
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
-		ret = (*it)->Init();
+	for (int i = 0; i < modules.size(); ++i)
+		ret = modules[i]->Init();
 
 	return ret;
 }
@@ -56,8 +57,8 @@ bool Application::Start()
 
 	appTimer->Start();
 
-	for (list<Module*>::iterator it = modules.begin(); it != modules.end() && ret; ++it)
-		ret = (*it)->Start();
+	for (int i = 0; i < modules.size(); ++i)
+		ret = modules[i]->Start();
 
 	return ret;
 }
@@ -68,14 +69,14 @@ update_status Application::Update()
 
 	update_status ret = UPDATE_CONTINUE;
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PreUpdate();
+	for (int i = 0; i < modules.size() && ret == UPDATE_CONTINUE; ++i)
+		ret = modules[i]->PreUpdate();
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->Update();
+	for (int i = 0; i < modules.size() && ret == UPDATE_CONTINUE; ++i)
+		ret = modules[i]->Update();
 
-	for(list<Module*>::iterator it = modules.begin(); it != modules.end() && ret == UPDATE_CONTINUE; ++it)
-		ret = (*it)->PostUpdate();
+	for (int i = 0; i < modules.size() && ret == UPDATE_CONTINUE; ++i)
+		ret = modules[i]->PostUpdate();
 
 	float dt = (appTimer->Read() - ms) / 1000.0f;
 
@@ -95,8 +96,8 @@ bool Application::CleanUp()
 {
 	bool ret = true;
 
-	for(list<Module*>::reverse_iterator it = modules.rbegin(); it != modules.rend() && ret; ++it)
-		ret = (*it)->CleanUp();
+	for (int i = modules.size() - 1; i >= 0; i--)
+		ret = modules[i]->CleanUp();
 
 	delete appTimer;
 
