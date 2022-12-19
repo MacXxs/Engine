@@ -106,7 +106,7 @@ update_status ModuleEditor::Update()
 
 	if (cameraOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once | windowResized);
+		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once);
 
 		if (ImGui::Begin("Camera Settings", &cameraOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
@@ -295,13 +295,14 @@ update_status ModuleEditor::Update()
 			ImGui::SetWindowSize("Console log", ImVec2(900, 250), ImGuiCond_Once);
 
 			std::string logInfo = "";
-			while (!engineLog->logLines.empty())
-			{
-				logInfo = engineLog->logLines.front().c_str();
-				lines.push_back(logInfo);
 
-				engineLog->logLines.pop();
+			for (int i = 0; i < engineLog->logLines.size(); ++i)
+			{
+				logInfo = engineLog->logLines[i].c_str();
+				lines.push_back(logInfo);
 			}
+
+			engineLog->logLines.clear();
 
 			for (std::string line : lines)
 			{

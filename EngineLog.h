@@ -2,7 +2,7 @@
 
 #include "Globals.h"
 
-#include <queue>
+#include <vector>
 #include <string>
 
 #define ENGINE_LOG(format, ...) engineLog->Log(__FILE__, __LINE__, format, __VA_ARGS__);
@@ -13,15 +13,12 @@ public:
 
 	EngineLog() {};
 
-	~EngineLog()
-	{
-		logLines = {};
-	}
+	~EngineLog() { logLines.clear(); }
 
 	void Log(const char file[], int line, const char* format, ...);
 
 public:
-	std::queue<std::string> logLines;
+	std::vector<std::string> logLines;
 };
 
 extern EngineLog* engineLog;

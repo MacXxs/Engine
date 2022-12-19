@@ -9,6 +9,7 @@
 #include "Model.h"
 
 #include <iostream>
+#include <algorithm>
 
 #include <MathGeoLib/src/Geometry/AABB.h>
 #include <MathGeoLib/src/Geometry/Frustum.h>
