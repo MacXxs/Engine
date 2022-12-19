@@ -13,15 +13,12 @@ public:
 
 	EngineLog() {};
 
-	~EngineLog()
-	{
-		logLines = {};
-	}
+	~EngineLog() { logLines.clear(); }
 
 	void Log(const char file[], int line, const char* format, ...);
 
 public:
-	std::queue<std::string> logLines;
+	std::vector<std::string> logLines;
 };
 
 extern EngineLog* engineLog;
