@@ -106,7 +106,7 @@ update_status ModuleEditor::Update()
 
 	if (cameraOpened)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once | windowResized);
+		ImGui::SetNextWindowPos(ImVec2(10, 30), ImGuiCond_Once);
 
 		if (ImGui::Begin("Camera Settings", &cameraOpened, ImGuiWindowFlags_AlwaysAutoResize))
 		{
