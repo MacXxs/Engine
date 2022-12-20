@@ -86,7 +86,7 @@ void Model::LoadMaterials(const aiScene* scene)
 	{
 		if (scene->mMaterials[i]->GetTexture(aiTextureType_DIFFUSE, 0, &file) == AI_SUCCESS)
 		{
-			textures.push_back(App->textures->Load(file.data, GetDirectory()));
+			textures.push_back(App->textures->Load(file.data, &GetDirectory()[0]));
 		}
 	}
 }

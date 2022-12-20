@@ -104,7 +104,7 @@ void Mesh::CreateVAO()
 void Mesh::Draw(const std::vector<unsigned>& model_textures,
 	const float3 &translation, const float4x4&rotation, const float3 &scale)
 {
-	unsigned program = App->program->program;
+	unsigned program = App->program->GetProgram();
 	const float4x4& view = App->engineCamera->GetViewMatrix();
 	const float4x4& proj = App->engineCamera->GetProjectionMatrix();
 	const float4x4& model = float4x4::FromTRS(translation, rotation, scale);

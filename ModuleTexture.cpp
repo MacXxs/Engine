@@ -1,7 +1,6 @@
 #include "ModuleTexture.h"
 #include "Globals.h"
 
-#include <string>
 #include <sys/stat.h>
 
 #include <GL/glew.h>
@@ -33,7 +32,7 @@ update_status ModuleTexture::Update()
 	return UPDATE_CONTINUE;
 }
 
-GLuint ModuleTexture::Load(const char* fileName, const std::string& filePath)
+GLuint ModuleTexture::Load(const char* fileName, const char* filePath)
 {
 	ENGINE_LOG("---- Loading texture ----");
 
@@ -46,7 +45,7 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string& filePath)
 	if (stat(fileName, &buffer) != 0)
 	{
 		//Checking in the fbx folder
-		if (stat((filePath + std::string(fileName)).c_str(), &buffer) != 0)
+		if (stat((std::string(filePath) + std::string(fileName)).c_str(), &buffer) != 0)
 		{
 			// Cheking in textures folder
 			if (stat((TEXTURES_PATH + std::string(fileName)).c_str(), &buffer) != 0)
@@ -69,36 +68,34 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string& filePath)
 	const wchar_t* path = wide_string.c_str();
 
 	DirectX::TexMetadata md;
-	DirectX::ScratchImage* img = new DirectX::ScratchImage;
-	DirectX::ScratchImage* flippedImg = new DirectX::ScratchImage;
-	DirectX::ScratchImage* dcmprsdImg = new DirectX::ScratchImage;
+	DirectX::ScratchImage img, flippedImg, dcmprsdImg;
 
-	HRESULT result = DirectX::LoadFromDDSFile(path, DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &md, *img);
+	HRESULT result = DirectX::LoadFromDDSFile(path, DirectX::DDS_FLAGS::DDS_FLAGS_NONE, &md, img);
 
 	if (FAILED(result))
 	{
-		result = DirectX::LoadFromTGAFile(path, &md, *img);
+		result = DirectX::LoadFromTGAFile(path, &md, img);
 
 		if (FAILED(result))
 		{
-			result = DirectX::LoadFromWICFile(path, DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &md, *img);
+			result = DirectX::LoadFromWICFile(path, DirectX::WIC_FLAGS::WIC_FLAGS_NONE, &md, img);
 
-			result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
-				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+			result = DirectX::FlipRotate(img.GetImages(), img.GetImageCount(), img.GetMetadata(),
+				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, flippedImg);
 		}
 		else
 		{
-			result = DirectX::FlipRotate(img->GetImages(), img->GetImageCount(), img->GetMetadata(),
-				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+			result = DirectX::FlipRotate(img.GetImages(), img.GetImageCount(), img.GetMetadata(),
+				DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, flippedImg);
 		}
 	}
 	else
 	{
-		result = DirectX::Decompress(img->GetImages(), img->GetImageCount(),
-			md, DXGI_FORMAT_UNKNOWN, *dcmprsdImg);
+		result = DirectX::Decompress(img.GetImages(), img.GetImageCount(),
+			md, DXGI_FORMAT_UNKNOWN, dcmprsdImg);
 
-		result = DirectX::FlipRotate(dcmprsdImg->GetImages(), dcmprsdImg->GetImageCount(), 
-			dcmprsdImg->GetMetadata(), DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, *flippedImg);
+		result = DirectX::FlipRotate(dcmprsdImg.GetImages(), dcmprsdImg.GetImageCount(), 
+			dcmprsdImg.GetMetadata(), DirectX::TEX_FR_FLAGS::TEX_FR_FLIP_VERTICAL, flippedImg);
 	}
 
 	glGenTextures(1, &texture);
@@ -113,7 +110,7 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string& filePath)
 	GLint internalFormat;
 	GLenum format, type;
 
-	switch (flippedImg->GetMetadata().format)
+	switch (flippedImg.GetMetadata().format)
 	{
 	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
 	case DXGI_FORMAT_R8G8B8A8_UNORM:
@@ -142,19 +139,15 @@ GLuint ModuleTexture::Load(const char* fileName, const std::string& filePath)
 		assert(false && "Unsupported format");
 	}
 
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, flippedImg->GetMetadata().width,
-		flippedImg->GetMetadata().height, 0, format, type, flippedImg->GetPixels());
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, flippedImg.GetMetadata().width,
+		flippedImg.GetMetadata().height, 0, format, type, flippedImg.GetPixels());
 
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	this->width = img->GetMetadata().width;
-	this->height = img->GetMetadata().height;
+	this->width = img.GetMetadata().width;
+	this->height = img.GetMetadata().height;
 
 	ENGINE_LOG("Texture %i loaded", texture);
-
-	delete img;
-	delete dcmprsdImg;
-	delete flippedImg;
 
 	return texture;
 }
